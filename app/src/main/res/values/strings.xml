@@ -1,0 +1,7 @@
+<resources>
+  <string name="app_name">ArpanCore</string>
+  <string name="give_call_permission">কল পারমিশন প্রদান করুন</string>
+  <string name="call_permission_for_first_time">কল করার জন্য প্রথমবারের মতো পারমিশন প্রদান করুন,</string>
+  <string name="yes_ok">আচ্ছা</string>
+  <string name="no_its_ok">না। থাক।</string>
+</resources>

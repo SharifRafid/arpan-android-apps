@@ -1,0 +1,27 @@
+package core.arpan.delivery.models
+
+data class User(
+    var error:Boolean? = null,
+    var message:String? = null,
+    var address: String? = null,
+    var blocked: Boolean? = null,
+    var email: String? = null,
+    var id: String? = null,
+    var image: Image? = null,
+    var name: String? = null,
+    var password: String? = null,
+    var phone: String? = null,
+    var registrationTokens: List<String> = ArrayList(),
+    var registrationTokensAdmin: List<Any> = ArrayList(),
+    var registrationTokensDA: List<Any> = ArrayList(),
+    var registrationTokensModerator: List<Any> = ArrayList(),
+    var role: String? = null,
+    var roles: List<String> = ArrayList(),
+    var bkash: String? = null,
+    var daCategory: String? = null,
+    var daStatus: Boolean? = false,
+    var activeNow: Boolean? = false,
+    var daStatusTitle: String? = null,
+    var daUID: String? = null,
+    var bloodGroup: String? = null,
+)

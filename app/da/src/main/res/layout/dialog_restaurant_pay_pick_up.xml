@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center"
+    app:cardCornerRadius="10dp"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/titleTextViewForPickUpShopDetailsDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/grey_normal"
+            android:fontFamily="@font/hind_siliguri_font"
+            android:gravity="center"
+            android:padding="10dp"
+            android:visibility="visible"
+            android:text="Amount to be paid in Restaurant/Shop/Client"
+            android:textColor="@color/divider_text_color_1"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewProducts"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/detailsOrderCustomTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/hind_siliguri_font"
+            android:gravity="center"
+            android:padding="10dp"
+            android:visibility="gone"
+            android:layout_marginBottom="20dp"
+            android:text=""
+            android:textColor="@color/grey"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+            <TextView
+                android:id="@+id/totalPriceTextView"
+                android:layout_width="0dp"
+                android:layout_centerHorizontal="true"
+                android:layout_height="wrap_content"
+                android:layout_weight=".50"
+                android:background="@color/grey_normal"
+                android:visibility="visible"
+                android:fontFamily="@font/hind_siliguri_font"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="0"
+                android:textColor="@color/divider_text_color_1"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/buttonPickUp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/hind_siliguri_font"
+                android:paddingStart="30dp"
+                android:layout_weight=".50"
+                android:paddingTop="10dp"
+                android:gravity="center"
+                android:background="@color/green_normal"
+                android:paddingEnd="30dp"
+                android:textColor="@color/white"
+                android:paddingBottom="10dp"
+                android:text="PICK UP"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
