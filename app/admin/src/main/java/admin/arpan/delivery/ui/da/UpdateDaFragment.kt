@@ -78,9 +78,9 @@ class UpdateDaFragment : Fragment() {
     }
 
     if (selectedDaAgent.image != null) {
-      if (selectedDaAgent.image!!.path != null) {
+      if (selectedDaAgent.image!! != null) {
         Glide.with(requireActivity())
-          .load(Constants.SERVER_FILES_BASE_URL + selectedDaAgent.image!!.path!!)
+          .load(Constants.SERVER_FILES_BASE_URL + selectedDaAgent.image!!)
           .diskCacheStrategy(DiskCacheStrategy.ALL)
           .centerCrop()
           .override(300, 300)
@@ -147,7 +147,7 @@ class UpdateDaFragment : Fragment() {
             requestFile
           )
           LiveDataUtil.observeOnce(uploadViewModel.uploadItem(body, "users")) { image ->
-            if (!image.path.isNullOrEmpty()) {
+            if (!image.isNullOrEmpty()) {
               val daAgent = HashMap<String, Any>()
               daAgent["name"] = userName
               daAgent["phone"] = mobile

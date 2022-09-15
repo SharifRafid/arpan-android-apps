@@ -71,7 +71,7 @@ class UpdateProductFragment(private var itemToUpdate: Product) : DialogFragment(
 
     if (itemToUpdate.icon != null) {
       Glide.with(this)
-        .load(Constants.SERVER_FILES_BASE_URL + itemToUpdate.icon!!.path)
+        .load(Constants.SERVER_FILES_BASE_URL + itemToUpdate.icon!!)
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         .centerCrop()
         .override(300, 300)
@@ -158,7 +158,7 @@ class UpdateProductFragment(private var itemToUpdate: Product) : DialogFragment(
     )
 
     LiveDataUtil.observeOnce(uploadViewModel.uploadItem(body, "products")) {
-      if (it.path != null) {
+      if (it == null) {
         requireContext().showToast("Failed to upload image", FancyToast.ERROR)
       } else {
         val hashMap = HashMap<String, Any>()

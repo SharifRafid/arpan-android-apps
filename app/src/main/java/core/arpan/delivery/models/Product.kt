@@ -1,13 +1,11 @@
 package core.arpan.delivery.models
 
-import core.arpan.delivery.models.Image
-
 data class Product(
     var arpanCharge: Int? = null,
     var categories: List<String>? = null,
     var coverPhoto: Any? = null,
     var description: String? = null,
-    var icon: Image? = null,
+    var icon: String? = null,
     var id: String? = null,
     var inStock: Boolean? = null,
     var name: String? = null,

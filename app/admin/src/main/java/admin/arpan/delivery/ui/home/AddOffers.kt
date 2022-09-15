@@ -67,7 +67,7 @@ class AddOffers : AppCompatActivity() {
       val map = it.results
       for (docField in map) {
         keyList.add(docField.id!!)
-        arrayList.add(docField.icon!!.path!!)
+        arrayList.add(docField.icon!!)
       }
       val linearLayoutManager = LinearLayoutManager(this@AddOffers)
       linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -112,14 +112,14 @@ class AddOffers : AppCompatActivity() {
       requestFile
     )
     LiveDataUtil.observeOnce(uploadViewModel.uploadItem(body, "banners")) { image ->
-      if (!image.path.isNullOrEmpty()) {
+      if (!image.isNullOrEmpty()) {
         val hashMap = Banner()
         hashMap.order = 1
         hashMap.icon = image
         LiveDataUtil.observeOnce(bannerViewModel.createItem(hashMap)) {
           dialog.dismiss()
           if (it.id != null) {
-            arrayList.add(image.path!!)
+            arrayList.add(image)
             keyList.add(it.id!!)
             offerItemRecyclerAdapter.notifyItemInserted(arrayList.size - 1)
             Toast.makeText(

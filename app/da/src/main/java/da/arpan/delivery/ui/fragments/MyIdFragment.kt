@@ -1,6 +1,7 @@
 package da.arpan.delivery.ui.fragments
 
 import android.R.attr.bitmap
+import android.app.AlertDialog
 import android.content.Context.WINDOW_SERVICE
 import android.content.res.Resources
 import android.graphics.*
@@ -12,69 +13,85 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidmads.library.qrgenearator.QRGContents
 import androidmads.library.qrgenearator.QRGEncoder
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.storage.FirebaseStorage
 import com.google.zxing.WriterException
+import com.shashank.sony.fancytoastlib.FancyToast
+import core.arpan.delivery.utils.Constants
+import core.arpan.delivery.utils.LiveDataUtil
+import core.arpan.delivery.utils.createProgressDialog
+import core.arpan.delivery.utils.showToast
 import da.arpan.delivery.R
+import da.arpan.delivery.viewModels.DAViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.dialog_alert_layout_main.view.*
+import kotlinx.android.synthetic.main.dialog_text_input_da_status.view.*
 import kotlinx.android.synthetic.main.fragment_my_id.view.*
 import kotlinx.android.synthetic.main.fragment_my_id.view.title_text_view
 import kotlinx.android.synthetic.main.fragment_wallet_dialog.view.*
 
-
+@AndroidEntryPoint
 class MyIdFragment : DialogFragment() {
+  private val daViewModel: DAViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(DialogFragment.STYLE_NORMAL,
-            R.style.Theme_ArpanDA)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setStyle(
+      DialogFragment.STYLE_NORMAL,
+      R.style.Theme_ArpanDA
+    )
+  }
+
+  override fun onCreateView(
+    inflater: LayoutInflater, container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View? {
+    // Inflate the layout for this fragment
+    return inflater.inflate(R.layout.fragment_my_id, container, false)
+  }
+
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    view.title_text_view.setOnClickListener {
+      dismiss()
     }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_id, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        view.title_text_view.setOnClickListener{
-            dismiss()
-        }
-        val sharedPreferences = view.context.getSharedPreferences("user_details",
-            AppCompatActivity.MODE_PRIVATE
-        )
-        view.daIdTextView.text = "ID: "+ sharedPreferences.getString("da_uid","").toString()
-        view.daNameTextView.text = "Name: "+ sharedPreferences.getString("da_name","").toString()
-        val daCategory = if(sharedPreferences.getString("da_category","").toString()=="রেগুলার"){
-            "Regular"
-        }else{
-            "Permanent"
+    val progressDialog = context?.createProgressDialog()
+    progressDialog?.show()
+    LiveDataUtil.observeOnce(daViewModel.getSelfProfile()) { selfProfile ->
+      progressDialog?.dismiss()
+      if (selfProfile.error == true) {
+        Log.e("ERROR : ", selfProfile.toString())
+        context?.showToast("Failed to fetch data", FancyToast.ERROR)
+      } else {
+        view.daIdTextView.text = "ID: " + selfProfile.daUID.toString()
+        view.daNameTextView.text = "Name: " + selfProfile.name.toString()
+        val daCategory = if (selfProfile.daCategory.toString() == Constants.DA_REG) {
+          "Regular"
+        } else {
+          "Permanent"
         }
         view.daTypeTextView.text = "Agent Type: $daCategory"
-        view.daBkashTextView.text = "bKash: "+ sharedPreferences.getString("da_bkash","").toString()
-        view.daBloodGroupTextView.text = "Blood Group: "+ sharedPreferences.getString("da_blood_group","").toString()
-        view.daContactTextView.text = "Contact: "+ sharedPreferences.getString("da_mobile","").toString()
+        view.daBkashTextView.text = "bKash: " + selfProfile.bkash
+        view.daBloodGroupTextView.text = "Blood Group: " + selfProfile.bloodGroup
+        view.daContactTextView.text = "Contact: " + selfProfile.phone
 
-        val image = sharedPreferences.getString("da_image","").toString()
-
-        if(image.isNotEmpty()){
-            val storageReference = FirebaseStorage.getInstance()
-                .getReference("da_storage_image_location")
-                .child(image)
-
+        if (selfProfile.image != null) {
+          if (!selfProfile.image.isNullOrEmpty()) {
             Glide.with(requireActivity())
-                .load(storageReference)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .centerCrop()
-                .override(300,300)
-                .placeholder(R.drawable.ic_baseline_perm_identity_24)
-                .into(view.daImageViewProfile)
+              .load(Constants.SERVER_FILES_BASE_URL+selfProfile.image)
+              .diskCacheStrategy(DiskCacheStrategy.ALL)
+              .centerCrop()
+              .override(300, 300)
+              .placeholder(R.drawable.ic_baseline_perm_identity_24)
+              .into(view.daImageViewProfile)
+          }
         }
 
         val manager = requireContext().getSystemService(WINDOW_SERVICE) as WindowManager?
@@ -86,7 +103,8 @@ class MyIdFragment : DialogFragment() {
         var smallerDimension = if (width < height) width else height
         smallerDimension = smallerDimension * 3 / 4
 
-        val inputValue = "Arpan Delivery Agent\nID: "+ sharedPreferences.getString("da_uid","").toString()
+        val inputValue =
+          "Arpan Delivery Agent\nID: " + selfProfile.daUID
 
         // Initializing the QR Encoder with your value to be encoded, type you required and Dimension
         // Initializing the QR Encoder with your value to be encoded, type you required and Dimension
@@ -94,25 +112,15 @@ class MyIdFragment : DialogFragment() {
         qrgEncoder.colorBlack = Color.GRAY
         qrgEncoder.colorWhite = Color.WHITE
         try {
-            // Getting QR-Code as Bitmap
-            var bitmap2 = qrgEncoder.bitmap
-            // Setting Bitmap to ImageView
-            view.qrCodeImageViewID.setImageBitmap(bitmap2)
+          // Getting QR-Code as Bitmap
+          var bitmap2 = qrgEncoder.bitmap
+          // Setting Bitmap to ImageView
+          view.qrCodeImageViewID.setImageBitmap(bitmap2)
         } catch (e: WriterException) {
-            Log.e("QR CODE", e.toString())
+          Log.e("QR CODE", e.toString())
         }
-    }
 
-    fun mergeBitmaps(logo: Bitmap?, qrcode: Bitmap): Bitmap? {
-        val combined = Bitmap.createBitmap(qrcode.width, qrcode.height, qrcode.config)
-        val canvas = Canvas(combined)
-        val canvasWidth: Int = canvas.getWidth()
-        val canvasHeight: Int = canvas.getHeight()
-        canvas.drawBitmap(qrcode, Matrix(), null)
-        val resizeLogo = Bitmap.createScaledBitmap(logo!!, canvasWidth / 5, canvasHeight / 5, true)
-        val centreX = (canvasWidth - resizeLogo.width) / 2
-        val centreY = (canvasHeight - resizeLogo.height) / 2
-        canvas.drawBitmap(resizeLogo, centreX.toFloat(), centreY.toFloat(), null)
-        return combined
+      }
     }
+  }
 }

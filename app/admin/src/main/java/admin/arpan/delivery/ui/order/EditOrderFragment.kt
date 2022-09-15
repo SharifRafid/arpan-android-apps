@@ -729,7 +729,7 @@ class EditOrderFragment(val orderItemMain: OrderItemMain) : DialogFragment(),
         dialogShopSelectListView.dialogListViewCommon.setOnItemClickListener { parent, view, position2, id ->
           mainShopItemHashMap[position].cart_products.add(
             CartProductEntity(
-              id = 0,
+              id = "0",
               product_item = true,
               product_item_price = productsMainArrayList[position2].price!! + productsMainArrayList[position2].arpanCharge!!,
               product_arpan_profit = productsMainArrayList[position2].arpanCharge!!,

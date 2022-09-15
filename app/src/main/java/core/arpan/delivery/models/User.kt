@@ -7,7 +7,7 @@ data class User(
     var blocked: Boolean? = null,
     var email: String? = null,
     var id: String? = null,
-    var image: Image? = null,
+    var image: String? = null,
     var name: String? = null,
     var password: String? = null,
     var phone: String? = null,

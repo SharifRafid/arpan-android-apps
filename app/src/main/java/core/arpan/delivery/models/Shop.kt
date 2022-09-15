@@ -1,8 +1,6 @@
 package core.arpan.delivery.models
 
 import com.google.gson.annotations.SerializedName
-import core.arpan.delivery.models.Image
-import core.arpan.delivery.models.Notice
 
 data class Shop(
     @SerializedName("isClient") var isClient: Boolean? = null,
@@ -12,8 +10,8 @@ data class Shop(
     @SerializedName("name") var name: String? = null,
     @SerializedName("order") var order: Int? = null,
     @SerializedName("dynamicLink") var dynamicLink: String? = null,
-    @SerializedName("coverPhoto") var coverPhoto: Image? = Image(),
-    @SerializedName("icon") var icon: Image? = Image(),
+    @SerializedName("coverPhoto") var coverPhoto: String? = String(),
+    @SerializedName("icon") var icon: String? = String(),
     @SerializedName("activeHours") var activeHours: String? = null,
     @SerializedName("location") var location: String? = null,
     @SerializedName("deliveryCharge") var deliveryCharge: Int? = null,

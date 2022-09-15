@@ -16,48 +16,58 @@ import da.arpan.delivery.R
 import kotlinx.android.synthetic.main.order_item_view.view.*
 
 class OrderItemRecyclerAdapter(
-        private val context: Context,
-        private val productItems: ArrayList<CartProductEntity>) : RecyclerView.Adapter
-    <OrderItemRecyclerAdapter.RecyclerViewHolder>() {
+  private val context: Context,
+  private val productItems: ArrayList<CartProductEntity>,
+  val showOriginalPrice: Boolean
+) : RecyclerView.Adapter
+<OrderItemRecyclerAdapter.RecyclerViewHolder>() {
 
-    class RecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textView = itemView.titleTextView as TextView
-        val amountTextView = itemView.amountTextView as TextView
-        val price = itemView.priceTextView as TextView
-    }
+  class RecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    val textView = itemView.titleTextView as TextView
+    val amountTextView = itemView.amountTextView as TextView
+    val price = itemView.priceTextView as TextView
+  }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewHolder {
-        val view = LayoutInflater.from(context).inflate(
-                R.layout.order_item_view, parent,
-            false)
-        return RecyclerViewHolder(view)
-    }
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewHolder {
+    val view = LayoutInflater.from(context).inflate(
+      R.layout.order_item_view, parent,
+      false
+    )
+    return RecyclerViewHolder(view)
+  }
 
-    override fun getItemCount(): Int {
-        return productItems.size
-    }
+  override fun getItemCount(): Int {
+    return productItems.size
+  }
 
-    override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
-        val cartProductEntity = productItems[position]
-        when{
-            cartProductEntity.medicine_item ->{
-                holder.price.text = context.getString(R.string.price_0_taka)
-                holder.textView.text = context.getString(R.string.medicine_order)
-            }
-            cartProductEntity.parcel_item ->{
-                holder.price.text = context.getString(R.string.price_0_taka)
-                holder.textView.text = context.getString(R.string.parcel_order)
-            }
-            cartProductEntity.custom_order_item ->{
-                holder.price.text = context.getString(R.string.price_0_taka)
-                holder.textView.text = context.getString(R.string.custom_order)
-            }
-            else ->{
-                //Product Item
-                holder.textView.text = cartProductEntity.product_item_name
-                holder.amountTextView.text = cartProductEntity.product_item_amount.toString()
-                holder.price.text = "৳ ${cartProductEntity.product_item_price*cartProductEntity.product_item_amount}"
-            }
+  override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
+    val cartProductEntity = productItems[position]
+    when {
+      cartProductEntity.medicine_item -> {
+        holder.price.text = context.getString(R.string.price_0_taka)
+        holder.textView.text = context.getString(R.string.medicine_order)
+      }
+      cartProductEntity.parcel_item -> {
+        holder.price.text = context.getString(R.string.price_0_taka)
+        holder.textView.text = context.getString(R.string.parcel_order)
+      }
+      cartProductEntity.custom_order_item -> {
+        holder.price.text = context.getString(R.string.price_0_taka)
+        holder.textView.text = context.getString(R.string.custom_order)
+      }
+      else -> {
+        //Product Item
+        holder.textView.text = cartProductEntity.product_item_name
+        holder.amountTextView.text = cartProductEntity.product_item_amount.toString()
+        if (showOriginalPrice) {
+          holder.price.text =
+            "৳ ${(cartProductEntity.product_item_price-cartProductEntity.product_arpan_profit) * cartProductEntity.product_item_amount}"
+        } else {
+          holder.price.text =
+            "৳ ${cartProductEntity.product_item_price * cartProductEntity.product_item_amount}"
+
         }
+      }
     }
+  }
 }

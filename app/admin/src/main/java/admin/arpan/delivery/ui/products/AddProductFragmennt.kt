@@ -151,7 +151,7 @@ class AddProductFragmennt : DialogFragment() {
     )
 
     LiveDataUtil.observeOnce(uploadViewModel.uploadItem(body, "products")) {
-      if (it.path == null) {
+      if (it == null) {
         requireContext().showToast("Failed to upload image", FancyToast.ERROR)
         cardViewButton.visibility = View.VISIBLE
         progress_circular.visibility = View.GONE

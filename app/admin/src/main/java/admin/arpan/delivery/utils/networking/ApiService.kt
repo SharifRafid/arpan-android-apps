@@ -84,7 +84,7 @@ interface ApiService {
     @Header("Authorization") accessToken: String,
     @Part fileName: MultipartBody.Part,
     @Header("path") path: String,
-  ): Image
+  ): String
 
   @POST("orders")
   suspend fun createNewOrder(

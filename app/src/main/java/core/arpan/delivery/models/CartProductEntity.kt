@@ -1,7 +1,7 @@
 package core.arpan.delivery.models
 
 data class CartProductEntity (
-    var id : Int = 0,
+    var id : String = "",
 
     var product_item : Boolean = false,
     var custom_order_item : Boolean = false,

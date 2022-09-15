@@ -621,10 +621,10 @@ class AddCustomOrder : Fragment(), ShopProductAddOrderInterface,
           requestFile
         )
         LiveDataUtil.observeOnce(uploadViewModel.uploadItem(body, "orders")) {
-          if (it.path == null) {
+          if (it == null) {
             requireContext().showToast("Failed to upload image", FancyToast.ERROR)
           } else {
-            cartProductEntity2.custom_order_image = it.path!!
+            cartProductEntity2.custom_order_image = it
             cartProductEntity.add(cartProductEntity2)
             orderItemMain.products = cartProductEntity
             placeOrderFinalUpload(viewMain, orderItemMain)
@@ -723,7 +723,7 @@ class AddCustomOrder : Fragment(), ShopProductAddOrderInterface,
         dialogShopSelectListView.dialogListViewCommon.setOnItemClickListener { parent, view, position2, id ->
           mainShopItemHashMap[position].cart_products.add(
             CartProductEntity(
-              id = 0,
+              id = "0",
               product_item = true,
               product_item_price = productsMainArrayList[position2].price!! + productsMainArrayList[position2].arpanCharge!!,
               product_arpan_profit = productsMainArrayList[position2].arpanCharge!!,

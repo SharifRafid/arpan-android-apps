@@ -13,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -22,15 +21,12 @@ import com.baoyachi.stepview.HorizontalStepView
 import com.baoyachi.stepview.bean.StepBean
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.google.gson.Gson
 import com.shashank.sony.fancytoastlib.FancyToast
-import com.squareup.okhttp.*
 import core.arpan.delivery.models.CartProductEntity
 import core.arpan.delivery.models.MainShopCartItem
 import core.arpan.delivery.models.OrderItemMain
 import core.arpan.delivery.models.Shop
 import core.arpan.delivery.utils.*
-import core.arpan.delivery.utils.networking.requests.SendNotificationRequest
 import da.arpan.delivery.R
 import da.arpan.delivery.adapters.OrderProductItemRecyclerAdapter
 import da.arpan.delivery.viewModels.DAViewModel
@@ -39,11 +35,9 @@ import kotlinx.android.synthetic.main.dialog_alert_layout_main.view.*
 import kotlinx.android.synthetic.main.dialog_restaurant_pay_pick_up.view.*
 import kotlinx.android.synthetic.main.fragment_order_history_new.view.*
 import kotlinx.android.synthetic.main.product_image_big_view.view.*
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 @AndroidEntryPoint
 class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : DialogFragment() {
@@ -84,7 +78,11 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
 
   private fun initVars(view: View) {
     progressDialog = contextMain.createProgressDialog()
-    productRecyclerViewAdapter = OrderProductItemRecyclerAdapter(contextMain, mainShopItemHashMap)
+    productRecyclerViewAdapter = OrderProductItemRecyclerAdapter(
+      contextMain,
+      mainShopItemHashMap,
+      true
+    )
     view.title_text_view.setOnClickListener {
       orderHistoryPage.closeDialog(this)
     }
@@ -710,7 +708,7 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
       dialogForRealPickUpItemsPriceView.recyclerViewProducts.layoutManager =
         LinearLayoutManager(contextMain)
       dialogForRealPickUpItemsPriceView.recyclerViewProducts.adapter =
-        OrderProductItemRecyclerAdapter(contextMain, mainShopItemHashMap)
+        OrderProductItemRecyclerAdapter(contextMain, mainShopItemHashMap, false)
       dialogForRealPickUpItemsPriceView.titleTextViewForPickUpShopDetailsDialog.text =
         "Amount to be collected from Customer"
       dialogForRealPickUpItemsPrice.setView(dialogForRealPickUpItemsPriceView)
@@ -744,7 +742,7 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
       dialogForRealPickUpItemsPriceView.recyclerViewProducts.layoutManager =
         LinearLayoutManager(contextMain)
       dialogForRealPickUpItemsPriceView.recyclerViewProducts.adapter =
-        OrderProductItemRecyclerAdapter(contextMain, mainShopItemHashMap)
+        OrderProductItemRecyclerAdapter(contextMain, mainShopItemHashMap, false)
       dialogForRealPickUpItemsPriceView.titleTextViewForPickUpShopDetailsDialog.text =
         "Amount to be collected from Customer"
       dialogForRealPickUpItemsPrice.setView(dialogForRealPickUpItemsPriceView)
@@ -818,7 +816,7 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
       dialogForRealPickUpItemsPriceView.recyclerViewProducts.layoutManager =
         LinearLayoutManager(contextMain)
       dialogForRealPickUpItemsPriceView.recyclerViewProducts.adapter =
-        OrderProductItemRecyclerAdapter(contextMain, mainShopItemHashMap)
+        OrderProductItemRecyclerAdapter(contextMain, mainShopItemHashMap, true)
       dialogForRealPickUpItemsPrice.setView(dialogForRealPickUpItemsPriceView)
       dialogForRealPickUpItemsPrice.window!!.setBackgroundDrawableResource(android.R.color.transparent)
       dialogForRealPickUpItemsPrice.show()

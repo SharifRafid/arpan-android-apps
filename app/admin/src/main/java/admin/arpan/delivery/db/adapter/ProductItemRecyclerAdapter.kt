@@ -71,7 +71,7 @@ class ProductItemRecyclerAdapter(
     }
     if (productItems[position].icon != null) {
       Glide.with(context)
-        .load(Constants.SERVER_FILES_BASE_URL + productItems[position].icon!!.path)
+        .load(Constants.SERVER_FILES_BASE_URL + productItems[position].icon!!)
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         .centerCrop()
         .override(300, 300)

@@ -1,6 +1,5 @@
 package admin.arpan.delivery.repositories
 
-import core.arpan.delivery.models.Image
 import core.arpan.delivery.utils.Preference
 import core.arpan.delivery.utils.networking.responses.DefaultResponse
 import okhttp3.MultipartBody
@@ -21,10 +20,10 @@ class UploadRepository
     }
   }
 
-  suspend fun uploadFile(file: MultipartBody.Part, path: String): Image {
+  suspend fun uploadFile(file: MultipartBody.Part, path: String): String? {
     val accessToken = getAccessToken()
     return if (accessToken == null) {
-      Image()
+      null
     } else {
       retrofitBuilder.apiService.uploadFile("Bearer $accessToken", file, path)
     }

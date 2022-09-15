@@ -157,7 +157,7 @@ class UpdateShop : AppCompatActivity() {
 
     if (shopItem.coverPhoto != null) {
       Glide.with(this)
-        .load(Constants.SERVER_FILES_BASE_URL + shopItem.coverPhoto!!.path)
+        .load(Constants.SERVER_FILES_BASE_URL + shopItem.coverPhoto!!)
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         .centerCrop()
         .override(300, 300)
@@ -167,7 +167,7 @@ class UpdateShop : AppCompatActivity() {
 
     if (shopItem.icon != null) {
       Glide.with(this)
-        .load(Constants.SERVER_FILES_BASE_URL + shopItem.icon!!.path)
+        .load(Constants.SERVER_FILES_BASE_URL + shopItem.icon!!)
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         .centerCrop()
         .override(300, 300)
@@ -270,7 +270,7 @@ class UpdateShop : AppCompatActivity() {
       map["categories"] = arrayListOf(category_keys[categoriesSpinner.selectedItemPosition])
       map["daCharge"] = da_charge.text.toString()
       map["deliveryCharge"] = delivery_charge.text.toString()
-      map["icon"] = it
+      map["icon"] = it!!
       map["order"] = shopOrderEdittext.text.toString()
       map["location"] = location.text.toString()
       map["name"] = bookTitle.text.toString()
@@ -346,7 +346,7 @@ class UpdateShop : AppCompatActivity() {
       map["categories"] = arrayListOf(category_keys[categoriesSpinner.selectedItemPosition])
       map["daCharge"] = da_charge.text.toString()
       map["deliveryCharge"] = delivery_charge.text.toString()
-      map["coverPhoto"] = coverPhoto
+      map["coverPhoto"] = coverPhoto!!
       map["order"] = shopOrderEdittext.text.toString()
       map["location"] = location.text.toString()
       map["name"] = bookTitle.text.toString()
@@ -402,8 +402,8 @@ class UpdateShop : AppCompatActivity() {
         map["categories"] = arrayListOf(category_keys[categoriesSpinner.selectedItemPosition])
         map["daCharge"] = da_charge.text.toString()
         map["deliveryCharge"] = delivery_charge.text.toString()
-        map["coverPhoto"] = coverPhoto
-        map["icon"] = it
+        map["coverPhoto"] = coverPhoto!!
+        map["icon"] = it!!
         map["order"] = shopOrderEdittext.text.toString()
         map["location"] = location.text.toString()
         map["name"] = bookTitle.text.toString()

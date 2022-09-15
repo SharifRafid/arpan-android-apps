@@ -79,9 +79,9 @@ class ShopItemRecyclerAdapter(
     }
 
     if (shopItems[position].icon != null) {
-      if (shopItems[position].icon!!.path!!.contains(".png")) {
+      if (shopItems[position].icon.toString().contains(".png")) {
         Glide.with(context)
-          .load(Constants.SERVER_FILES_BASE_URL + shopItems[position].icon!!.path!!)
+          .load(Constants.SERVER_FILES_BASE_URL + shopItems[position].icon!!)
           .diskCacheStrategy(DiskCacheStrategy.ALL)
           .centerCrop()
           .override(300, 300)

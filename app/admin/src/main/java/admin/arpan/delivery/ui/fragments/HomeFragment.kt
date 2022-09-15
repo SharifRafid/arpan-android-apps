@@ -69,6 +69,9 @@ class HomeFragment : Fragment(), OrderOldSubItemRecyclerAdapterInterface {
       activity?.let { ViewModelProvider(it).get(HomeViewModelMainData::class.java) }!!
     loadTopItemsRecyclerData(view)
     loadOrdersMainOneDayData(view)
+    view.refreshFAB.setOnClickListener {
+      loadOrdersMainOneDayData(view)
+    }
     view.addCustomOrderButton.setOnClickListener {
       homeMainNewInterface.navigateToFragment(R.id.addCustomOrder)
     }
@@ -112,8 +115,8 @@ class HomeFragment : Fragment(), OrderOldSubItemRecyclerAdapterInterface {
         )
       )
     ) {
-      Log.e("DATA", it.toString())
       if (it.error == true) {
+        Log.e("TEST",it.toString())
         view.noProductsText.visibility = View.VISIBLE
         view.noProductsTextView.text = getString(R.string.you_have_no_orders)
         view.progressBar.visibility = View.GONE
@@ -199,7 +202,6 @@ class HomeFragment : Fragment(), OrderOldSubItemRecyclerAdapterInterface {
       homeMainNewInterface.navigateToFragment(R.id.shopStatistics)
     }
   }
-
 
   override fun openSelectedOrderItemAsDialog(
     position: Int,

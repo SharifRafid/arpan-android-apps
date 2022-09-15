@@ -65,15 +65,13 @@ class DaItemRecyclerAdapter(
     }
 
     if (daAgent.image != null) {
-      if (daAgent.image!!.path != null) {
-        Glide.with(context)
-          .load(Constants.SERVER_FILES_BASE_URL + daAgent.image!!.path!!)
-          .diskCacheStrategy(DiskCacheStrategy.ALL)
-          .centerCrop()
-          .override(300, 300)
-          .placeholder(R.drawable.test_shop_image)
-          .into(holder.imageView)
-      }
+      Glide.with(context)
+        .load(Constants.SERVER_FILES_BASE_URL + daAgent.image!!)
+        .diskCacheStrategy(DiskCacheStrategy.ALL)
+        .centerCrop()
+        .override(300, 300)
+        .placeholder(R.drawable.test_shop_image)
+        .into(holder.imageView)
     }
 
     if (daAgent.activeNow == true) {

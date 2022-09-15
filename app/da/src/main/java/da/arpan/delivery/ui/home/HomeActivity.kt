@@ -113,11 +113,92 @@ class HomeActivity : AppCompatActivity(), OrderHistoryPage {
         header_Arrow_Image.setRotation(slideOffset * 180)
       }
     })
+  }
+
+  private fun initFirebaseMessaging() {
+    if (Preference(this.application).getUser() != null) {
+      FirebaseMessaging.getInstance().isAutoInitEnabled = true
+      FirebaseMessaging.getInstance().token.addOnCompleteListener(
+        OnCompleteListener { task ->
+          if (!task.isSuccessful) {
+            return@OnCompleteListener
+          }
+          val token = task.result!!
+          LiveDataUtil.observeOnce(daViewModel.addRegTokenDA(token)) {
+            Log.e("FCM", token.toString())
+          }
+        })
+    }
+  }
+
+  override fun onResume() {
+    super.onResume()
+    loadSecondData()
+  }
+
+  private fun initVars() {
+    orderAdapterMain =
+      OrderOldMainItemRecyclerAdapter(this, ordersMainOldItemsArrayList, daViewModel)
+    orderAdapterMainCompleted =
+      OrderOldMainItemRecyclerAdapter(this, ordersMainOldItemsArrayListCompleted, daViewModel)
+
+    val c = Calendar.getInstance() // this takes current date
+    c[Calendar.DAY_OF_MONTH] = 1    //Date set to start
+    c[Calendar.HOUR_OF_DAY] = 0
+
+    val d = Calendar.getInstance() // this takes current date
+    d[Calendar.DAY_OF_MONTH] = c.getActualMaximum(Calendar.DAY_OF_MONTH) //Date set to end month
+    d[Calendar.HOUR_OF_DAY] = 24
+
+    startTimeMonthMillis = c.timeInMillis
+    endTimeMonthMillis = d.timeInMillis
+  }
+
+  private fun placeOrderMainData() {
+    ordersMainHashMap.clear()
+    ordersMainOldItemsArrayList.clear()
+    for (order in ordersMainArrayList) {
+      val date = getDate(order.orderPlacingTimeStamp, "dd-MM-yyyy")
+      if (ordersMainHashMap.containsKey(date)) {
+        ordersMainHashMap[date]!!.add(order)
+      } else {
+        ordersMainHashMap[date!!] = ArrayList()
+        ordersMainHashMap[date]!!.add(order)
+      }
+    }
+    for (item in ordersMainHashMap.entries) {
+      val order = OrderOldItems(
+        date = item.key,
+        orders = item.value
+      )
+      order.orders.reverse()
+      ordersMainOldItemsArrayList.add(
+        order
+      )
+    }
+    Collections.sort(ordersMainOldItemsArrayList, kotlin.Comparator { o1, o2 ->
+      o1.orders[0].orderPlacingTimeStamp.compareTo(o2.orders[0].orderPlacingTimeStamp)
+    })
+    ordersMainOldItemsArrayList.reverse()
+    ordersRecyclerView.layoutManager = LinearLayoutManager(this)
+    ordersRecyclerView.adapter = orderAdapterMain
+
+    noProductsText.visibility = View.GONE
+    progressBar.visibility = View.GONE
+    ordersRecyclerView.visibility = View.VISIBLE
+  }
+
+  private fun loadSecondData() {
+    swipeRefresh.setOnRefreshListener {
+      swipeRefresh.isRefreshing = false
+      loadSecondData()
+    }
     val progressDialog = createProgressDialog()
-    progressDialog.show()
+    noProductsText.visibility = View.GONE
+    progressBar.visibility = View.VISIBLE
+    ordersRecyclerView.visibility = View.GONE
     LiveDataUtil.observeOnce(daViewModel.getSelfProfile()) { selfProfile ->
       daAgent = selfProfile
-      progressDialog.dismiss()
       if (selfProfile.error == true) {
         Log.e("ERROR : ", selfProfile.toString())
         showToast("Failed to fetch data", FancyToast.ERROR)
@@ -198,7 +279,41 @@ class HomeActivity : AppCompatActivity(), OrderHistoryPage {
             dialogForStatusTextChange.show()
             true
           }
-          loadSecondData()
+          val getOrdersRequest = GetOrdersRequest()
+          getOrdersRequest.startTimeMillis = startTimeMonthMillis
+          getOrdersRequest.endTimeMillis = endTimeMonthMillis
+          LiveDataUtil.observeOnce(daViewModel.getOrders(getOrdersRequest)) {
+            if (it.error == true) {
+              showToast("Failed to load orders", FancyToast.ERROR)
+            } else {
+              ordersMainArrayList.clear()
+              ordersMainArrayListCompleted.clear()
+              for (document in it.results!!) {
+                if (document.orderStatus == "COMPLETED") {
+                  ordersMainArrayListCompleted.add(document)
+                } else {
+                  ordersMainArrayList.add(document)
+                }
+              }
+              if (ordersMainArrayList.isNotEmpty()) {
+                placeOrderMainData()
+              } else {
+                noProductsText.visibility = View.VISIBLE
+                noProductsTextView.text = "You don't have any order now!"
+                progressBar.visibility = View.GONE
+                ordersRecyclerView.visibility = View.GONE
+              }
+              if (ordersMainArrayListCompleted.isNotEmpty()) {
+                placeOrderMainDataCompletedOrders()
+              } else {
+                noProductsTextBottomSheet.visibility = View.VISIBLE
+                noProductsTextViewBottomSheet.text = "You don't have any order now!"
+                progressBarBottomSheet.visibility = View.GONE
+                ordersRecyclerViewBottomSheet.visibility = View.GONE
+              }
+
+            }
+          }
         } else {
           val view = LayoutInflater.from(this@HomeActivity)
             .inflate(R.layout.dialog_alert_layout_main, null)
@@ -222,124 +337,7 @@ class HomeActivity : AppCompatActivity(), OrderHistoryPage {
     }
   }
 
-  private fun initFirebaseMessaging() {
-    if (Preference(this.application).getUser() != null) {
-      FirebaseMessaging.getInstance().isAutoInitEnabled = true
-      FirebaseMessaging.getInstance().token.addOnCompleteListener(
-        OnCompleteListener { task ->
-          if (!task.isSuccessful) {
-            return@OnCompleteListener
-          }
-          val token = task.result!!
-          LiveDataUtil.observeOnce(daViewModel.addRegTokenDA(token)) {
-            Log.e("FCM", token.toString())
-          }
-        })
-    }
-  }
-
-  override fun onResume() {
-    super.onResume()
-    loadSecondData()
-  }
-
-  private fun initVars() {
-    orderAdapterMain = OrderOldMainItemRecyclerAdapter(this, ordersMainOldItemsArrayList, daViewModel)
-    orderAdapterMainCompleted =
-      OrderOldMainItemRecyclerAdapter(this, ordersMainOldItemsArrayListCompleted, daViewModel)
-
-    val c = Calendar.getInstance() // this takes current date
-    c[Calendar.DAY_OF_MONTH] = 1    //Date set to start
-    c[Calendar.HOUR_OF_DAY] = 0
-
-    val d = Calendar.getInstance() // this takes current date
-    d[Calendar.DAY_OF_MONTH] = c.getActualMaximum(Calendar.DAY_OF_MONTH) //Date set to end month
-    d[Calendar.HOUR_OF_DAY] = 24
-
-    startTimeMonthMillis = c.timeInMillis
-    endTimeMonthMillis = d.timeInMillis
-  }
-
-  private fun placeOrderMainData() {
-    ordersMainHashMap.clear()
-    ordersMainOldItemsArrayList.clear()
-    for (order in ordersMainArrayList) {
-      val date = getDate(order.orderPlacingTimeStamp, "dd-MM-yyyy")
-      if (ordersMainHashMap.containsKey(date)) {
-        ordersMainHashMap[date]!!.add(order)
-      } else {
-        ordersMainHashMap[date!!] = ArrayList()
-        ordersMainHashMap[date]!!.add(order)
-      }
-    }
-    for (item in ordersMainHashMap.entries) {
-      val order = OrderOldItems(
-        date = item.key,
-        orders = item.value
-      )
-      order.orders.reverse()
-      ordersMainOldItemsArrayList.add(
-        order
-      )
-    }
-    Collections.sort(ordersMainOldItemsArrayList, kotlin.Comparator { o1, o2 ->
-      o1.orders[0].orderPlacingTimeStamp.compareTo(o2.orders[0].orderPlacingTimeStamp)
-    })
-    ordersMainOldItemsArrayList.reverse()
-    ordersRecyclerView.layoutManager = LinearLayoutManager(this)
-    ordersRecyclerView.adapter = orderAdapterMain
-
-    noProductsText.visibility = View.GONE
-    progressBar.visibility = View.GONE
-    ordersRecyclerView.visibility = View.VISIBLE
-  }
-
-  private fun loadSecondData() {
-    swipeRefresh.setOnRefreshListener {
-      swipeRefresh.isRefreshing = false
-      loadSecondData()
-    }
-    noProductsText.visibility = View.GONE
-    progressBar.visibility = View.VISIBLE
-    ordersRecyclerView.visibility = View.GONE
-    val getOrdersRequest = GetOrdersRequest()
-    getOrdersRequest.startTimeMillis = startTimeMonthMillis
-    getOrdersRequest.endTimeMillis = endTimeMonthMillis
-    LiveDataUtil.observeOnce(daViewModel.getOrders(getOrdersRequest)){
-      if(it.error == true){
-        showToast("Failed to load orders", FancyToast.ERROR)
-      }else{
-        ordersMainArrayList.clear()
-        ordersMainArrayListCompleted.clear()
-        for (document in it.results!!) {
-          if (document.orderStatus == "COMPLETED") {
-            ordersMainArrayListCompleted.add(document)
-          } else {
-            ordersMainArrayList.add(document)
-          }
-        }
-        if (ordersMainArrayList.isNotEmpty()) {
-          placeOrderMainData()
-        } else {
-          noProductsText.visibility = View.VISIBLE
-          noProductsTextView.text = "You don't have any order now!"
-          progressBar.visibility = View.GONE
-          ordersRecyclerView.visibility = View.GONE
-        }
-        if (ordersMainArrayListCompleted.isNotEmpty()) {
-          placeOrderMainDataCompletedOrders()
-        } else {
-          noProductsTextBottomSheet.visibility = View.VISIBLE
-          noProductsTextViewBottomSheet.text = "You don't have any order now!"
-          progressBarBottomSheet.visibility = View.GONE
-          ordersRecyclerViewBottomSheet.visibility = View.GONE
-        }
-
-      }
-    }
-  }
-
-  fun placeOrderMainDataCompletedOrders() {
+  private fun placeOrderMainDataCompletedOrders() {
     ordersMainHashMapCompletedOrders.clear()
     ordersMainOldItemsArrayListCompleted.clear()
     for (order in ordersMainArrayListCompleted) {
@@ -362,9 +360,13 @@ class HomeActivity : AppCompatActivity(), OrderHistoryPage {
       } as ArrayList<OrderItemMain>)
     val calculationMonth =
       CalculationLogics().calculateArpansStatsForArpan(ordersMainArrayListCompleted)
-    var yourIncome = calculationToday.agentsIncome
-    var arpansDue = calculationToday.agentsDueToArpan
+    var yourIncome = 0
+    var arpansDue = 0
     var todaysOrders = 0
+    Log.e("TEsT",calculationToday.agentsIncome.toString())
+    Log.e("TEsT",calculationToday.agentsDueToArpan.toString())
+    Log.e("TEsT",calculationToday.agentsDueToArpanPermanent.toString())
+    Log.e("TEsT",calculationToday.agentsIncomePermanent.toString())
     if (daAgent.daCategory == Constants.DA_PERM) {
       yourIncome = calculationToday.agentsIncomePermanent
       arpansDue = calculationToday.agentsDueToArpanPermanent
@@ -405,15 +407,6 @@ class HomeActivity : AppCompatActivity(), OrderHistoryPage {
     noProductsTextBottomSheet.visibility = View.GONE
     progressBarBottomSheet.visibility = View.GONE
     ordersRecyclerViewBottomSheet.visibility = View.VISIBLE
-  }
-
-  fun getDate(milliSeconds: Long, dateFormat: String?): String? {
-    // Create a DateFormatter object for displaying date in specified format.
-    val formatter = SimpleDateFormat(dateFormat, Locale.ENGLISH)
-    // Create a calendar object that will convert the date and time value in milliseconds to date.
-    val calendar: Calendar = Calendar.getInstance()
-    calendar.setTimeInMillis(milliSeconds)
-    return formatter.format(calendar.getTime())
   }
 
   fun logOutNowTheUser(view: View) {
