@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
+import core.arpan.delivery.utils.orderNumberToString
 import kotlinx.android.synthetic.main.old_orders_list_view.view.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -48,20 +49,16 @@ class OrderOldSubItemRecyclerAdapter(
   }
 
   override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
-    holder.orderIdTextView.text = productItems[position].orderId
+    holder.orderIdTextView.text = orderNumberToString(productItems[position].orderId.toString())
     holder.timeTextView.text = getDate(productItems[position].orderPlacingTimeStamp, "hh:mm a")
-    if (productItems[position].orderCompletedStatus == "CANCELLED") {
-      holder.statusTextView.text = "CANCELLED"
-      holder.statusTextView.setBackgroundColor(Color.parseColor("#EA594D"))
-    } else {
-      holder.statusTextView.text = productItems[position].orderStatus
-      when (productItems[position].orderStatus) {
-        "PENDING" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#262626"))
-        "VERIFIED" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#FA831B"))
-        "PROCESSING" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#ED9D34"))
-        "PICKED UP" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#ED9D34"))
-        "COMPLETED" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#43A047"))
-      }
+    holder.statusTextView.text = productItems[position].orderStatus
+    when (productItems[position].orderStatus) {
+      "PENDING" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#262626"))
+      "VERIFIED" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#FA831B"))
+      "PROCESSING" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#ED9D34"))
+      "PICKED UP" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#ED9D34"))
+      "COMPLETED" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#43A047"))
+      "CANCELLED" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#EA594D"))
     }
     holder.cardView.setOnClickListener {
       orderOldSubItemRecyclerAdapterInterfaceListener.openSelectedOrderItemAsDialog(

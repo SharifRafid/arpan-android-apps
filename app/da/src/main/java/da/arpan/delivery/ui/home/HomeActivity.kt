@@ -341,7 +341,7 @@ class HomeActivity : AppCompatActivity(), OrderHistoryPage {
     ordersMainHashMapCompletedOrders.clear()
     ordersMainOldItemsArrayListCompleted.clear()
     for (order in ordersMainArrayListCompleted) {
-      if (order.orderCompletedStatus != "CANCELLED") {
+      if (order.orderStatus != "CANCELLED") {
         val date = getDate(order.orderPlacingTimeStamp, "dd-MM-yyyy").toString()
         if (ordersMainHashMapCompletedOrders.containsKey(date)) {
           ordersMainHashMapCompletedOrders[date]!!.add(order)

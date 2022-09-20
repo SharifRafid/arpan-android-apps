@@ -708,7 +708,7 @@ class OrderHistoryFragment : Fragment() {
           view.acceptOrderButton.visibility = View.GONE
           view.cancelOrderButton.visibility = View.GONE
         }
-        if (orderItemMain.orderCompletedStatus == "CANCELLED") {
+        if (orderItemMain.orderStatus == "CANCELLED") {
           view.step_view_order_progress.visibility = View.GONE
           view.orderStatusTopButton.text = "CANCELLED"
           view.cancelOrderButton.visibility = View.VISIBLE
@@ -826,7 +826,7 @@ class OrderHistoryFragment : Fragment() {
               sendNotificationToDa(
                 orderItemMain.userId!!,
                 arrayListDaStatus[position].id!!,
-                "আপনি একটি অর্ডার ${orderItemMain.orderId} পেয়েছেন ।",
+                "আপনি একটি অর্ডার ${orderNumberToString(orderItemMain.orderId.toString())} পেয়েছেন ।",
                 "আপনি একটি অর্ডার পেয়েছেন দ্রুত অর্ডারটি রিসিভ করুন ।",
                 orderId
               )
@@ -854,7 +854,6 @@ class OrderHistoryFragment : Fragment() {
         var daDetails = HashMap<String, Any>()
         daDetails["daID"] = ""
         daDetails["orderStatus"] = OrderStatus.VERIFIED
-        daDetails["orderCompletedStatus"] = ""
         LiveDataUtil.observeOnce(orderViewModel.updateItem(orderId, daDetails)) { itOrder ->
           progressDialog.dismiss()
           if (itOrder.id != null) {
@@ -888,7 +887,7 @@ class OrderHistoryFragment : Fragment() {
             workWithTheDocumentData(view, itOrder)
             sendNotification(
               orderItemMain.userId!!,
-              "আপনার অর্ডার ${orderItemMain.orderId} টি কনফার্ম করা হয়েছে ।",
+              "আপনার অর্ডার ${orderNumberToString(orderItemMain.orderId.toString())} টি কনফার্ম করা হয়েছে ।",
               "আপনার অর্ডারটি কনফার্ম করা হয়েছে, দ্রুতই অর্ডারটি আপনার কাছে পৌছে যাবে ।",
               orderId
             )
@@ -1070,8 +1069,7 @@ class OrderHistoryFragment : Fragment() {
       alertDialogToCancelUserData.dismiss()
       progressDialog.show()
       val hashMap = HashMap<String, Any>()
-      hashMap["orderStatus"] = "COMPLETED"
-      hashMap["orderCompletedStatus"] = "CANCELLED"
+      hashMap["orderStatus"] = "CANCELLED"
       hashMap["cancelledOrderReasonFromAdmin"] =
         alertDialogToCancelUserDataView.edt_enter_password_field.text.toString().trim()
       LiveDataUtil.observeOnce(orderViewModel.updateItem(orderId, hashMap)) {
@@ -1080,7 +1078,7 @@ class OrderHistoryFragment : Fragment() {
           contextMain.showToast("Success", FancyToast.SUCCESS)
                     sendNotification(
             orderItemMain.userId!!,
-            "আপনার অর্ডার ${orderItemMain.orderId} টি ক্যান্সেল করা হয়েছে ।",
+            "আপনার অর্ডার ${orderNumberToString(orderItemMain.orderId.toString())} টি ক্যান্সেল করা হয়েছে ।",
             "অর্পণের সাথে থাকার জন্য ধন্যবাদ ।",
             orderId
           )
@@ -1101,7 +1099,7 @@ class OrderHistoryFragment : Fragment() {
     apibody: String,
     orderID: String
   ) {
-    LiveDataUtil.observeOnce(notificationViewModel.sendNotificationToDA(
+    LiveDataUtil.observeOnce(notificationViewModel.sendNotificationToUser(
       SendNotificationRequest(
         userId = userId,
         title = apititle,
@@ -1134,7 +1132,7 @@ class OrderHistoryFragment : Fragment() {
   }
 
   private fun setTextOnTextViewsOnMainUi(view: View, orderItemMain: OrderItemMain) {
-    view.orderIdTextView.text = "Order# " + orderItemMain.orderId
+    view.orderIdTextView.text = "Order# " + orderNumberToString(orderItemMain.orderId.toString())
 
     view.userNameEditText.setText(orderItemMain.userName)
 
@@ -1224,14 +1222,13 @@ class OrderHistoryFragment : Fragment() {
         dialogToForceChangeOrderStatusView.statusRadioButtonGroup.check(R.id.pickedRadioButton)
       }
       "COMPLETED" -> {
-        if (orderItemMain.orderCompletedStatus == "CANCELLED") {
-          dialogToForceChangeOrderStatusView.statusRadioButtonGroup.check(R.id.cancelledRadio)
-          dialogToForceChangeOrderStatusView.processingRadioButton.visibility = View.GONE
-          dialogToForceChangeOrderStatusView.pickedRadioButton.visibility = View.GONE
-          dialogToForceChangeOrderStatusView.completedRadio.visibility = View.GONE
-        } else {
-          dialogToForceChangeOrderStatusView.statusRadioButtonGroup.check(R.id.completedRadio)
-        }
+        dialogToForceChangeOrderStatusView.statusRadioButtonGroup.check(R.id.completedRadio)
+      }
+      "CANCELLED" -> {
+        dialogToForceChangeOrderStatusView.statusRadioButtonGroup.check(R.id.cancelledRadio)
+        dialogToForceChangeOrderStatusView.processingRadioButton.visibility = View.GONE
+        dialogToForceChangeOrderStatusView.pickedRadioButton.visibility = View.GONE
+        dialogToForceChangeOrderStatusView.completedRadio.visibility = View.GONE
       }
     }
     dialogToForceChangeOrderStatusView.saveForceOrderChangeStatusButton.setOnClickListener {
@@ -1242,12 +1239,10 @@ class OrderHistoryFragment : Fragment() {
       when (dialogToForceChangeOrderStatusView.statusRadioButtonGroup.checkedRadioButtonId) {
         R.id.pendingRadioButton -> {
           hashMap["orderStatus"] = "PENDING"
-          hashMap["orderCompletedStatus"] = ""
           hashMap["daID"] = ""
         }
         R.id.cancelledRadio -> {
-          hashMap["orderStatus"] = "COMPLETED"
-          hashMap["orderCompletedStatus"] = "CANCELLED"
+          hashMap["orderStatus"] = "CANCELLED"
           hashMap["daID"] = ""
         }
         else -> {

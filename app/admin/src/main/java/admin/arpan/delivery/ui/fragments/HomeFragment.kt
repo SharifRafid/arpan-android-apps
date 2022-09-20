@@ -15,16 +15,21 @@ import admin.arpan.delivery.ui.home.AddOffers
 import admin.arpan.delivery.ui.home.HomeViewModelMainData
 import admin.arpan.delivery.ui.interfaces.HomeMainNewInterface
 import admin.arpan.delivery.ui.settings.SettingActivity
+import admin.arpan.delivery.viewModels.AdminViewModel
 import core.arpan.delivery.utils.networking.requests.GetOrdersRequest
 import admin.arpan.delivery.viewModels.HomeViewModel
+import android.app.AlertDialog
 import core.arpan.delivery.utils.LiveDataUtil
 import core.arpan.delivery.utils.getDate
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.shashank.sony.fancytoastlib.FancyToast
+import core.arpan.delivery.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import java.lang.ClassCastException
@@ -44,6 +49,7 @@ class HomeFragment : Fragment(), OrderOldSubItemRecyclerAdapterInterface {
   private var ordersMainOldItemsArrayList = ArrayList<OrderOldItems>()
   private var ordersMainArrayList = ArrayList<OrderItemMain>()
   private val viewModel: HomeViewModel by viewModels()
+  private val adminViewModel: AdminViewModel by viewModels()
 
   override fun onAttach(context: Context) {
     super.onAttach(context)
@@ -71,6 +77,25 @@ class HomeFragment : Fragment(), OrderOldSubItemRecyclerAdapterInterface {
     loadOrdersMainOneDayData(view)
     view.refreshFAB.setOnClickListener {
       loadOrdersMainOneDayData(view)
+    }
+    view.refreshFAB.setOnLongClickListener {
+      AlertDialog.Builder(contextMain)
+        .setTitle("Sure to clear user app cache?")
+        .setPositiveButton("Yes") { dialogInterface, i ->
+          dialogInterface.dismiss()
+          LiveDataUtil.observeOnce(adminViewModel.clearRedisCache()) {
+            if (it.error == true) {
+              contextMain.showToast("Failed to clear", FancyToast.ERROR)
+            } else {
+              contextMain.showToast("Cache cleared", FancyToast.SUCCESS)
+            }
+          }
+        }
+        .setNegativeButton("No") { dialogInterface, i ->
+          dialogInterface.dismiss()
+        }
+        .create().show()
+      true
     }
     view.addCustomOrderButton.setOnClickListener {
       homeMainNewInterface.navigateToFragment(R.id.addCustomOrder)
@@ -116,7 +141,7 @@ class HomeFragment : Fragment(), OrderOldSubItemRecyclerAdapterInterface {
       )
     ) {
       if (it.error == true) {
-        Log.e("TEST",it.toString())
+        Log.e("TEST", it.toString())
         view.noProductsText.visibility = View.VISIBLE
         view.noProductsTextView.text = getString(R.string.you_have_no_orders)
         view.progressBar.visibility = View.GONE

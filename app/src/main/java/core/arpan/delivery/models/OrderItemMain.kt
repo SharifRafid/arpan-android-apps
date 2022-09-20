@@ -26,7 +26,6 @@ data class OrderItemMain(
     var pickDropOrderItem : PickDropOrderItem? = null,
     var lattitude : String? = null,
     var longtitude : String? = null,
-    var orderCompletedStatus : String? = null,
     var daDetails : User? = null,
     var daID : String? = null,
     var daCharge : Int = 0,

@@ -25,7 +25,7 @@ class CalculationLogics {
         calculationResult.agentsIncomePermanent = 0
 
         for(orderItemMain in orders){
-            if(orderItemMain.orderStatus=="COMPLETED" && orderItemMain.orderCompletedStatus!="CANCELLED"){
+            if(orderItemMain.orderStatus=="COMPLETED"){
                 calculationResult.completed += 1
 
                 //Order Was Successfully completed so we can calculate this value
@@ -73,7 +73,7 @@ class CalculationLogics {
                     calculationResult.agentsDueToArpanPermanent += deliveryAgentsDueToArpan
                 }
 
-            }else if(orderItemMain.orderCompletedStatus=="CANCELLED"){
+            }else if(orderItemMain.orderStatus=="CANCELLED"){
                 calculationResult.cancelled += 1
             }
         }

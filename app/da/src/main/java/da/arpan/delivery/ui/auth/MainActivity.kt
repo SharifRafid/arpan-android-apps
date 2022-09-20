@@ -18,6 +18,7 @@ import androidx.activity.viewModels
 import com.shashank.sony.fancytoastlib.FancyToast
 import core.arpan.delivery.utils.LiveDataUtil
 import core.arpan.delivery.utils.createProgressDialog
+import core.arpan.delivery.utils.generateSignatureOTP
 import core.arpan.delivery.utils.showToast
 import da.arpan.delivery.R
 import da.arpan.delivery.ui.home.HomeActivity
@@ -104,7 +105,7 @@ class MainActivity : AppCompatActivity() {
             LiveDataUtil.observeOnce(
                 viewModel.getSendOTPResponse(
                     edt_phone_number.text.toString(),
-                    "test_signature"
+                    generateSignatureOTP()
                 )
             ) {
                 runOnUiThread {

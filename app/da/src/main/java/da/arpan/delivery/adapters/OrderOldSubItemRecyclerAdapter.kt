@@ -17,6 +17,7 @@ import com.shashank.sony.fancytoastlib.FancyToast
 import core.arpan.delivery.models.OrderItemMain
 import core.arpan.delivery.utils.LiveDataUtil
 import core.arpan.delivery.utils.createProgressDialog
+import core.arpan.delivery.utils.orderNumberToString
 import core.arpan.delivery.utils.showToast
 import da.arpan.delivery.R
 import da.arpan.delivery.ui.home.HomeActivity
@@ -61,7 +62,7 @@ class OrderOldSubItemRecyclerAdapter(
   }
 
   override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
-    holder.orderIdTextView.text = productItems[position].orderId
+    holder.orderIdTextView.text = orderNumberToString(productItems[position].orderId.toString())
     holder.timeTextView.text = getDate(productItems[position].orderPlacingTimeStamp, "hh:mm a")
     when (productItems[position].orderStatus) {
       "PENDING" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#262626"))

@@ -7,10 +7,7 @@ import core.arpan.delivery.utils.networking.requests.SendNotificationRequest
 import admin.arpan.delivery.utils.networking.responses.*
 import core.arpan.delivery.models.*
 import core.arpan.delivery.utils.networking.requests.RefreshRequest
-import core.arpan.delivery.utils.networking.responses.DefaultResponse
-import core.arpan.delivery.utils.networking.responses.GetOrdersResponse
-import core.arpan.delivery.utils.networking.responses.LoginResponse
-import core.arpan.delivery.utils.networking.responses.RefreshResponse
+import core.arpan.delivery.utils.networking.responses.*
 import okhttp3.MultipartBody
 import retrofit2.http.*
 
@@ -353,4 +350,14 @@ interface ApiService {
     @Header("Authorization") accessToken: String,
     @Path("id") id: String
   ): DefaultResponse
+
+  @POST("admins/clear-redis")
+  suspend fun clearRedisCache(
+    @Header("Authorization") accessToken: String
+  ): DefaultResponse
+
+  @GET("feedbacks")
+  suspend fun getFeedbacksResponse(
+    @Header("Authorization") accessToken: String
+  ): FeedbacksResponse
 }

@@ -515,4 +515,5 @@
       android:layout_marginBottom="20dp"
       android:src="@drawable/ic_refresh_black_24dp"
       app:tint="@color/white" />
+
 </RelativeLayout>

@@ -599,52 +599,51 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
         }
       }
       "COMPLETED" -> {
-        if (orderItemMain.orderCompletedStatus == "CANCELLED") {
-          view.step_view_order_progress.visibility = View.GONE
-          view.orderStatusTopButton.text = "CANCELLED"
-          if (orderItemMain.cancelledOrderReasonFromAdmin!!.trim().isNotEmpty()) {
-            view.linearLayoutCancelReasonContainer.visibility = View.VISIBLE
-            view.orderCancellationReasonDetails.text = orderItemMain.cancelledOrderReasonFromAdmin
-          } else {
-            view.linearLayoutCancelReasonContainer.visibility = View.GONE
-          }
-          view.orderStatusTopButton.setBackgroundColor(Color.parseColor("#EA594D"))
-        } else {
-          val setpview5 =
-            view.findViewById<View>(R.id.step_view_order_progress) as HorizontalStepView
-          val stepsBeanList: MutableList<StepBean> = ArrayList()
-          val stepBean4 = StepBean("     PENDING     ", 1)
-          val stepBean0 = StepBean("     VERIFIED     ", 1)
-          val stepBean1 = StepBean("     PROCESSING     ", 1)
-          val stepBean2 = StepBean("     PICKED UP     ", 1)
-          val stepBean3 = StepBean("     COMPLETED     ", 1)
-          if (orderItemMain.processingTimeStampMillis != 0L) {
-            stepBean1.name =
-              "PROCESSING\n(${getDate(orderItemMain.processingTimeStampMillis, "hh:mm")})"
-          }
-          if (orderItemMain.verifiedTimeStampMillis != 0L) {
-            stepBean0.name =
-              "VERIFIED\n(${getDate(orderItemMain.verifiedTimeStampMillis, "hh:mm")})"
-          }
-          if (orderItemMain.orderPlacingTimeStamp != 0L) {
-            stepBean4.name = "PENDING\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
-          }
-          if (orderItemMain.pickedUpTimeStampMillis != 0L) {
-            stepBean2.name =
-              "PICKED UP\n(${getDate(orderItemMain.pickedUpTimeStampMillis, "hh:mm")})"
-          }
-          if (orderItemMain.completedTimeStampMillis != 0L) {
-            stepBean3.name =
-              "COMPLETED\n(${getDate(orderItemMain.completedTimeStampMillis, "hh:mm")})"
-          }
-          stepsBeanList.add(stepBean4)
-          stepsBeanList.add(stepBean0)
-          stepsBeanList.add(stepBean1)
-          stepsBeanList.add(stepBean2)
-          stepsBeanList.add(stepBean3)
-          setStepView(view, setpview5, stepsBeanList)
-          view.orderStatusTopButton.setBackgroundColor(Color.parseColor("#43A047"))
+        val setpview5 =
+          view.findViewById<View>(R.id.step_view_order_progress) as HorizontalStepView
+        val stepsBeanList: MutableList<StepBean> = ArrayList()
+        val stepBean4 = StepBean("     PENDING     ", 1)
+        val stepBean0 = StepBean("     VERIFIED     ", 1)
+        val stepBean1 = StepBean("     PROCESSING     ", 1)
+        val stepBean2 = StepBean("     PICKED UP     ", 1)
+        val stepBean3 = StepBean("     COMPLETED     ", 1)
+        if (orderItemMain.processingTimeStampMillis != 0L) {
+          stepBean1.name =
+            "PROCESSING\n(${getDate(orderItemMain.processingTimeStampMillis, "hh:mm")})"
         }
+        if (orderItemMain.verifiedTimeStampMillis != 0L) {
+          stepBean0.name =
+            "VERIFIED\n(${getDate(orderItemMain.verifiedTimeStampMillis, "hh:mm")})"
+        }
+        if (orderItemMain.orderPlacingTimeStamp != 0L) {
+          stepBean4.name = "PENDING\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
+        }
+        if (orderItemMain.pickedUpTimeStampMillis != 0L) {
+          stepBean2.name =
+            "PICKED UP\n(${getDate(orderItemMain.pickedUpTimeStampMillis, "hh:mm")})"
+        }
+        if (orderItemMain.completedTimeStampMillis != 0L) {
+          stepBean3.name =
+            "COMPLETED\n(${getDate(orderItemMain.completedTimeStampMillis, "hh:mm")})"
+        }
+        stepsBeanList.add(stepBean4)
+        stepsBeanList.add(stepBean0)
+        stepsBeanList.add(stepBean1)
+        stepsBeanList.add(stepBean2)
+        stepsBeanList.add(stepBean3)
+        setStepView(view, setpview5, stepsBeanList)
+        view.orderStatusTopButton.setBackgroundColor(Color.parseColor("#43A047"))
+      }
+      "CANCELLED" -> {
+        view.step_view_order_progress.visibility = View.GONE
+        view.orderStatusTopButton.text = "CANCELLED"
+        if (orderItemMain.cancelledOrderReasonFromAdmin!!.trim().isNotEmpty()) {
+          view.linearLayoutCancelReasonContainer.visibility = View.VISIBLE
+          view.orderCancellationReasonDetails.text = orderItemMain.cancelledOrderReasonFromAdmin
+        } else {
+          view.linearLayoutCancelReasonContainer.visibility = View.GONE
+        }
+        view.orderStatusTopButton.setBackgroundColor(Color.parseColor("#EA594D"))
       }
     }
   }
@@ -724,7 +723,8 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
         WindowManager.LayoutParams.FLAG_FULLSCREEN
       )
       dialogForRealPickUpItemsPriceView.recyclerViewProducts.visibility = View.VISIBLE
-      dialogForRealPickUpItemsPriceView.totalPriceTextView.text = "Total: ${orderItemMain.totalPrice} + ${orderItemMain.deliveryCharge} = ${orderItemMain.totalPrice + orderItemMain.deliveryCharge}৳"
+      dialogForRealPickUpItemsPriceView.totalPriceTextView.text =
+        "Total: ${orderItemMain.totalPrice} + ${orderItemMain.deliveryCharge} = ${orderItemMain.totalPrice + orderItemMain.deliveryCharge}৳"
       dialogForRealPickUpItemsPriceView.buttonPickUp.text = "Complete"
       dialogForRealPickUpItemsPriceView.buttonPickUp.setOnClickListener {
         dialogForRealPickUpItemsPrice.dismiss()
@@ -752,9 +752,9 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
   }
 
   private fun pickUpOrderItem(view: View, orderItemMain: OrderItemMain) {
-    Log.e("TEST","0")
+    Log.e("TEST", "0")
     if (orderItemMain.products.size == 1 && !orderItemMain.products[0].product_item) {
-      Log.e("TEST","1")
+      Log.e("TEST", "1")
       val dialogView = LayoutInflater.from(contextMain)
         .inflate(R.layout.dialog_alert_layout_main, null)
       val dialog = AlertDialog.Builder(contextMain).create()
@@ -796,7 +796,7 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
         var totalPriceAmountNew = 0
         for (item in mainShopItemHashMap) {
           for (cartProduct in item.cart_products) {
-            totalPriceAmountNew += ((cartProduct.product_item_price-cartProduct.product_arpan_profit) * cartProduct.product_item_amount)
+            totalPriceAmountNew += ((cartProduct.product_item_price - cartProduct.product_arpan_profit) * cartProduct.product_item_amount)
           }
         }
         dialogForRealPickUpItemsPriceView.totalPriceTextView.text = "Total: ${totalPriceAmountNew}৳"
@@ -956,7 +956,7 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
   }
 
   private fun setTextOnTextViewsOnMainUi(view: View, orderItemMain: OrderItemMain) {
-    view.orderIdTextView.text = "Order# " + orderItemMain.orderId
+    view.orderIdTextView.text = "Order# " + orderNumberToString(orderItemMain.orderId.toString())
 
     view.userNameEditText.setText(orderItemMain.userName)
 
@@ -996,6 +996,6 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
   }
 }
 
-interface OrderHistoryPage{
-  fun closeDialog(instance : DialogFragment)
+interface OrderHistoryPage {
+  fun closeDialog(instance: DialogFragment)
 }
