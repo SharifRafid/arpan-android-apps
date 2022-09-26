@@ -168,13 +168,20 @@ class OrdersFilterDate : Fragment(), OrderOldSubItemRecyclerAdapterInterface {
         val c = Calendar.getInstance() // this takes current date
         c[Calendar.DAY_OF_MONTH] = 1
         c[Calendar.HOUR_OF_DAY] = 0
+        c[Calendar.MINUTE] = 0
+        c[Calendar.SECOND] = 0
 
         val d = Calendar.getInstance() // this takes current date
         d[Calendar.DAY_OF_MONTH] = c.getActualMaximum(Calendar.DAY_OF_MONTH)
-        d[Calendar.HOUR_OF_DAY] = 24
+        d[Calendar.HOUR_OF_DAY] = 23
+        d[Calendar.MINUTE] = 59
+        d[Calendar.SECOND] = 59
 
         val startTimeMillis = c.timeInMillis
         val endTimeMillis = d.timeInMillis
+
+        Log.e("START TIME MONTH", startTimeMillis.toString())
+        Log.e("END TIME MONTH", endTimeMillis.toString())
 
         LiveDataUtil.observeOnce(viewModel.getOrders(
             GetOrdersRequest(

@@ -382,6 +382,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <TextView
+              android:id="@+id/cancelledTime"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:fontFamily="@font/hind_siliguri_font"
+              android:gravity="start"
+              android:paddingStart="15dp"
+              android:paddingEnd="15dp"
+              android:paddingTop="6dp"
+              android:paddingBottom="4dp"
+              android:background="@drawable/order_background_filled"
+              android:text="Cancelled at : "
+              android:textColor="@color/white"
+              android:textColorHint="#6E8697"
+              android:visibility="gone"
+              android:textSize="14sp"
+              android:textStyle="bold"/>
+
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_marginTop="5dp"

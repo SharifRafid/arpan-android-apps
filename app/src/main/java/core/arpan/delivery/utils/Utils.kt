@@ -165,3 +165,7 @@ fun enccriptData(txt: String, pk: String): String? {
     }
     return encoded
 }
+
+fun String?.toNotNull(): String{
+    return this?.toString() ?: ""
+}

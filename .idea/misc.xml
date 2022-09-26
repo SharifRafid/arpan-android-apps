@@ -3,17 +3,22 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/admin/src/main/res/layout/custom_spinner_item_view.xml" value="0.353125" />
+        <entry key="app/admin/src/main/res/layout/dialog_orders_list.xml" value="0.33" />
         <entry key="app/admin/src/main/res/layout/fragment_da_management.xml" value="0.1796875" />
         <entry key="app/admin/src/main/res/layout/fragment_home.xml" value="0.25" />
+        <entry key="app/admin/src/main/res/layout/fragment_order_history_new.xml" value="0.353125" />
         <entry key="app/admin/src/main/res/layout/fragment_shops.xml" value="0.1796875" />
+        <entry key="app/admin/src/main/res/layout/fragment_users.xml" value="0.1" />
         <entry key="app/da/src/main/res/drawable/ic__12x512_square_icon__da__01.xml" value="0.1" />
         <entry key="app/da/src/main/res/drawable/ic__12x512_square_icon__notification_.xml" value="0.155" />
         <entry key="app/da/src/main/res/drawable/ic_launcher_foreground.xml" value="0.155" />
         <entry key="app/da/src/main/res/layout/activity_home.xml" value="0.24074074074074073" />
         <entry key="app/da/src/main/res/layout/activity_main.xml" value="0.353125" />
+        <entry key="app/da/src/main/res/layout/dialog_orders_list.xml" value="0.3476923076923077" />
         <entry key="app/da/src/main/res/layout/dialog_restaurant_pay_pick_up.xml" value="0.353125" />
         <entry key="app/da/src/main/res/layout/fragment_my_id.xml" value="0.353125" />
-        <entry key="app/da/src/main/res/layout/fragment_order_history_new.xml" value="0.24074074074074073" />
+        <entry key="app/da/src/main/res/layout/fragment_order_history_new.xml" value="0.25" />
         <entry key="app/da/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.155" />
         <entry key="app/da/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.155" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.155" />

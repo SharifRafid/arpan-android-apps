@@ -765,6 +765,24 @@ class OrderHistoryFragment : Fragment() {
           view.orderStatusTopButton.setBackgroundColor(Color.parseColor("#43A047"))
         }
       }
+      "CANCELLED" -> {
+        view.step_view_order_progress.visibility = View.GONE
+        view.cancelledTime.visibility = View.VISIBLE
+        view.cancelledTime.text = "Cancelled at : "+getDate(orderItemMain.completedTimeStampMillis, "hh:mm a")
+        view.orderStatusTopButton.text = "CANCELLED"
+        view.cancelOrderButton.visibility = View.VISIBLE
+        view.cancelOrderButton.text = "Delete"
+        view.cancelOrderButton.setOnClickListener {
+          showDeleteOrderCustomDialog(view, orderItemMain)
+        }
+        if (!orderItemMain.cancelledOrderReasonFromAdmin.isNullOrEmpty()) {
+          view.linearLayoutCancelReasonContainer.visibility = View.VISIBLE
+          view.orderCancellationReasonDetails.text = orderItemMain.cancelledOrderReasonFromAdmin
+        } else {
+          view.linearLayoutCancelReasonContainer.visibility = View.GONE
+        }
+        view.orderStatusTopButton.setBackgroundColor(Color.parseColor("#EA594D"))
+      }
     }
   }
 
@@ -1070,6 +1088,7 @@ class OrderHistoryFragment : Fragment() {
       progressDialog.show()
       val hashMap = HashMap<String, Any>()
       hashMap["orderStatus"] = "CANCELLED"
+      hashMap["completedTimeStampMillis"] = System.currentTimeMillis()
       hashMap["cancelledOrderReasonFromAdmin"] =
         alertDialogToCancelUserDataView.edt_enter_password_field.text.toString().trim()
       LiveDataUtil.observeOnce(orderViewModel.updateItem(orderId, hashMap)) {

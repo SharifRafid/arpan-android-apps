@@ -130,6 +130,9 @@ class HomeFragment : Fragment(), OrderOldSubItemRecyclerAdapterInterface {
     val startTimeMillis = c.timeInMillis
     val endTimeMillis = d.timeInMillis
 
+    Log.e("START TIME", startTimeMillis.toString())
+    Log.e("END TIME", endTimeMillis.toString())
+
     LiveDataUtil.observeOnce(
       viewModel.getOrders(
         GetOrdersRequest(
@@ -225,6 +228,10 @@ class HomeFragment : Fragment(), OrderOldSubItemRecyclerAdapterInterface {
     }
     view.statisticsCardView.setOnClickListener {
       homeMainNewInterface.navigateToFragment(R.id.shopStatistics)
+    }
+    view.statisticsCardView.setOnLongClickListener {
+      homeMainNewInterface.navigateToFragment(R.id.usersFragment)
+      true
     }
   }
 
