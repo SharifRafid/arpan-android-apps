@@ -4,13 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.database.FirebaseDatabase
 import core.arpan.delivery.models.Location
+import core.arpan.delivery.utils.LiveDataUtil
 import da.arpan.delivery.R
 import da.arpan.delivery.adapters.LocationItemRecyclerAdapter
+import da.arpan.delivery.viewModels.AuthViewModel
+import da.arpan.delivery.viewModels.PublicViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_delivery_charge.view.*
 import kotlinx.android.synthetic.main.fragment_wallet_dialog.view.title_text_view
 import kotlin.collections.ArrayList
@@ -25,13 +31,14 @@ private const val ARG_PARAM2 = "param2"
  * Use the [WalletDialogFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+@AndroidEntryPoint
 class DeliveryChargeChartFragment : DialogFragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
-    var normalLocationsItemsArrayList = ArrayList<Location>()
     lateinit var normalLocationsItemsRecyclerAdapter : LocationItemRecyclerAdapter
+    private val publicViewModel: PublicViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,38 +61,13 @@ class DeliveryChargeChartFragment : DialogFragment() {
         view.title_text_view.setOnClickListener{
             dismiss()
         }
-        FirebaseDatabase.getInstance()
-            .reference
-            .child("data")
-            .child("delivery_charges")
-            .get().addOnCompleteListener {
-                if(it.isSuccessful){
-                    normalLocationsItemsArrayList.clear()
-                    for (snap in it.result!!.children) {
-                        val locationItem = Location(
-                            locationName = snap.child("name").value.toString(),
-                            deliveryCharge = snap.child("deliveryCharge").value.toString().toInt(),
-                            daCharge = snap.child("daCharge").value.toString().toInt(),
-                        )
-                        if(snap.hasChild("deliveryChargeClient")){
-                            if(snap.child("deliveryChargeClient").value != null){
-                                if(snap.child("deliveryChargeClient").value.toString().isNotEmpty()){
-                                    locationItem.deliveryChargeClient  =  snap.child("deliveryChargeClient").value.toString().toInt()
-                                }
-                            }
-                        }
-                        normalLocationsItemsArrayList.add(
-                         locationItem
-                        )
-                    }
-                    view.deliveryChargeRecyclerView.layoutManager = LinearLayoutManager(activity)
-                    normalLocationsItemsRecyclerAdapter =
-                        LocationItemRecyclerAdapter(requireActivity(),
-                            normalLocationsItemsArrayList, "delivery_charges")
-                    view.deliveryChargeRecyclerView.adapter = normalLocationsItemsRecyclerAdapter
-                }else{
-                    it.exception!!.printStackTrace()
-                }
+        LiveDataUtil.observeOnce(publicViewModel.getAllLocations()){
+            if(it.isNotEmpty()){
+                view.deliveryChargeRecyclerView.layoutManager = LinearLayoutManager(activity)
+                normalLocationsItemsRecyclerAdapter =
+                    LocationItemRecyclerAdapter(requireActivity(), it)
+                view.deliveryChargeRecyclerView.adapter = normalLocationsItemsRecyclerAdapter
             }
+        }
     }
 }

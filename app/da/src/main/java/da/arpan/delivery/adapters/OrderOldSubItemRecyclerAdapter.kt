@@ -70,6 +70,7 @@ class OrderOldSubItemRecyclerAdapter(
       "PROCESSING" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#ED9D34"))
       "PICKED UP" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#ED9D34"))
       "COMPLETED" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#43A047"))
+      "CANCELLED" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#EA594D"))
     }
     if (productItems[position].orderStatus == "VERIFIED") {
       holder.cancelAcceptButtonLinear.visibility = View.VISIBLE

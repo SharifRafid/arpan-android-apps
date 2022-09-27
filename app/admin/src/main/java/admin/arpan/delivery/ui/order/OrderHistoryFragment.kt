@@ -1088,6 +1088,7 @@ class OrderHistoryFragment : Fragment() {
       progressDialog.show()
       val hashMap = HashMap<String, Any>()
       hashMap["orderStatus"] = "CANCELLED"
+      hashMap["daID"] = ""
       hashMap["completedTimeStampMillis"] = System.currentTimeMillis()
       hashMap["cancelledOrderReasonFromAdmin"] =
         alertDialogToCancelUserDataView.edt_enter_password_field.text.toString().trim()

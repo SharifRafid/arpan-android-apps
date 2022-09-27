@@ -18,8 +18,7 @@ import da.arpan.delivery.R
 import kotlinx.android.synthetic.main.location_item_recycler_view.view.*
 
 class LocationItemRecyclerAdapter(val context : Context,
-                                  val locations : ArrayList<Location>,
-                                  val firebaseDatabaseLocation : String)
+                                  val locations : ArrayList<Location>)
     : RecyclerView.Adapter<LocationItemRecyclerAdapter.RecyclerViewHolder>(){
 
     class RecyclerViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){

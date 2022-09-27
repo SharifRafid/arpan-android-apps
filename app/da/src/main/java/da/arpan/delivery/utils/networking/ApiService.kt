@@ -1,5 +1,6 @@
 package da.arpan.delivery.utils.networking
 
+import core.arpan.delivery.models.Location
 import core.arpan.delivery.models.OrderItemMain
 import core.arpan.delivery.models.User
 import core.arpan.delivery.utils.networking.requests.*
@@ -89,5 +90,10 @@ interface ApiService {
     @Header("Authorization") accessToken: String,
     @Body getOrdersRequest: GetOrdersRequest
   ): GetOrdersResponse
+
+  @GET("exposed-routes/locations-main")
+  suspend fun getLocations(): ArrayList<Location>
+
+
 
 }
