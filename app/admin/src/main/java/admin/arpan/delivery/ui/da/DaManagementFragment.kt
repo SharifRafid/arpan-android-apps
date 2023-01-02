@@ -84,7 +84,13 @@ class DaManagementFragment : Fragment(), DaItemRecyclerAdapterInterface {
         context?.showToast("Failed to find", FancyToast.ERROR)
       } else {
         daList.clear()
-        daList.addAll(it.results)
+        val newList = ArrayList<DaItemResponse>()
+        newList.addAll(it.results)
+        newList.sortWith(Comparator {item1, item2 ->
+          item1.daItem!!.daUID!!.toInt().compareTo(item2.daItem!!.daUID!!.toInt())
+        })
+        daList.addAll(newList.filter { item -> item.daItem!!.activeNow == true })
+        daList.addAll(newList.filter { item -> item.daItem!!.activeNow == false })
         daItemRecyclerAdapter.notifyDataSetChanged()
         progressDialog.dismiss()
       }

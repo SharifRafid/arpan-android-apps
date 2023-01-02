@@ -41,6 +41,7 @@ class SettingActivity : AppCompatActivity() {
   private var orderStartTimeLimitString = "00:00"
   private var orderEndTimeLimitString = "00:00"
   private var orderAllowOverTimeOrder = false
+  private var orderAppStateOn = false
 
   private var customOrdersMaxTimeLimitString = 0
   private var medicineOrdersMaxTimeLimitString = 0
@@ -359,12 +360,14 @@ class SettingActivity : AppCompatActivity() {
     saveOrderTimeButton.isEnabled = false
     startTimeOrder.isEnabled = false
     endTimeOrder.isEnabled = false
-    allowOverTimeCheckBox.isEnabled = false
+    outdoorOnOfSwitch.isEnabled = false
+    appStatusCheckbox.isEnabled = false
     LiveDataUtil.observeOnce(settingViewModel.getSettings(Constants.SETTING_ID)) {
       if (it.id != null) {
         orderStartTimeLimitString = it.orderStartTime!!
         orderEndTimeLimitString = it.orderEndTime!!
-        orderAllowOverTimeOrder = it.orderOverTimeAllowed == true
+        orderAllowOverTimeOrder = it.outdoorDeliveryOn == true
+        orderAppStateOn = it.appOn == true
         placeDataOnEdittextsOrderLimitsCheckbox()
         initListenersForOrderLimitEdittextsAndCheckBoxes()
         initCustomOrderMaxLimitTimeLogic(it)
@@ -379,10 +382,12 @@ class SettingActivity : AppCompatActivity() {
   private fun placeDataOnEdittextsOrderLimitsCheckbox() {
     startTimeOrder.setText(orderStartTimeLimitString)
     endTimeOrder.setText(orderEndTimeLimitString)
-    allowOverTimeCheckBox.isChecked = orderAllowOverTimeOrder
+    outdoorOnOfSwitch.isChecked = orderAllowOverTimeOrder
+    appStatusCheckbox.isChecked = orderAppStateOn
     startTimeOrder.isEnabled = true
     endTimeOrder.isEnabled = true
-    allowOverTimeCheckBox.isEnabled = true
+    outdoorOnOfSwitch.isEnabled = true
+    appStatusCheckbox.isEnabled = true
   }
 
   private fun initListenersForOrderLimitEdittextsAndCheckBoxes() {
@@ -408,7 +413,10 @@ class SettingActivity : AppCompatActivity() {
     endTimeOrder.doOnTextChanged { text, start, before, count ->
       checkButtonShouldBeEnabledOrNotStatus()
     }
-    allowOverTimeCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
+    outdoorOnOfSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+      checkButtonShouldBeEnabledOrNotStatus()
+    }
+    appStatusCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
       checkButtonShouldBeEnabledOrNotStatus()
     }
   }
@@ -416,25 +424,30 @@ class SettingActivity : AppCompatActivity() {
   private fun checkButtonShouldBeEnabledOrNotStatus() {
     saveOrderTimeButton.isEnabled = startTimeOrder.text.toString() != orderStartTimeLimitString ||
             endTimeOrder.text.toString() != orderEndTimeLimitString ||
-            allowOverTimeCheckBox.isChecked != orderAllowOverTimeOrder
+            outdoorOnOfSwitch.isChecked != orderAllowOverTimeOrder||
+            appStatusCheckbox.isChecked != orderAppStateOn
 
     saveOrderTimeButton.setOnClickListener {
       saveOrderTimeButton.isEnabled = false
       startTimeOrder.isEnabled = false
       endTimeOrder.isEnabled = false
-      allowOverTimeCheckBox.isEnabled = false
+      outdoorOnOfSwitch.isEnabled = false
+      appStatusCheckbox.isEnabled = false
       val hashMap = HashMap<String, Any>()
       hashMap["orderStartTime"] = startTimeOrder.text.toString()
       hashMap["orderEndTime"] = endTimeOrder.text.toString()
-      hashMap["orderOverTimeAllowed"] = allowOverTimeCheckBox.isChecked
+      hashMap["outdoorDeliveryOn"] = outdoorOnOfSwitch.isChecked
+      hashMap["appOn"] = appStatusCheckbox.isChecked
       LiveDataUtil.observeOnce(settingViewModel.updateItem(Constants.SETTING_ID, hashMap)) {
         startTimeOrder.isEnabled = true
         endTimeOrder.isEnabled = true
-        allowOverTimeCheckBox.isEnabled = true
+        outdoorOnOfSwitch.isEnabled = true
+        appStatusCheckbox.isEnabled = true
         if (it.id != null) {
           orderStartTimeLimitString = startTimeOrder.text.toString()
           orderEndTimeLimitString = endTimeOrder.text.toString()
-          orderAllowOverTimeOrder = allowOverTimeCheckBox.isChecked
+          orderAllowOverTimeOrder = outdoorOnOfSwitch.isChecked
+          orderAppStateOn = appStatusCheckbox.isChecked
         } else {
           saveOrderTimeButton.isEnabled = true
         }

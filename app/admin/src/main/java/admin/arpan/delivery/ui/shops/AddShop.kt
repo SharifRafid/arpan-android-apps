@@ -21,6 +21,7 @@ import androidx.activity.viewModels
 import androidx.core.net.toFile
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.shashank.sony.fancytoastlib.FancyToast
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_add_shop.*
 import okhttp3.MediaType
@@ -109,6 +110,24 @@ class AddShop : AppCompatActivity() {
         .start()
     }
 
+    startTimeOrder.setOnClickListener {
+      var timePicker = TimePickerDialog.newInstance(
+        { view, hourOfDay, minute, second ->
+          startTimeOrder.setText("$hourOfDay:$minute")
+        }, false
+      )
+      timePicker.show(supportFragmentManager, "Start_Time")
+    }
+
+    endTimeOrder.setOnClickListener {
+      var timePicker = TimePickerDialog.newInstance(
+        { view, hourOfDay, minute, second ->
+          endTimeOrder.setText("$hourOfDay:$minute")
+        }, false
+      )
+      timePicker.show(supportFragmentManager, "End_Time")
+    }
+
     upload.setOnClickListener {
       dialog.show()
       if (imagePath.toString().isNotEmpty() &&
@@ -157,8 +176,8 @@ class AddShop : AppCompatActivity() {
         shop_order.toInt(),
         "",
         null,
-        it,
-        "",
+        it!!.data,
+        "${startTimeOrder.text}TO${endTimeOrder.text}",
         location.text.toString(),
         delivery_charge.text.toString().toInt(),
         da_charge.text.toString().toInt(),
@@ -188,7 +207,7 @@ class AddShop : AppCompatActivity() {
       "",
       null,
       null,
-      "",
+      "${startTimeOrder.text}TO${endTimeOrder.text}",
       location.text.toString(),
       delivery_charge.text.toString().toInt(),
       da_charge.text.toString().toInt(),
@@ -227,9 +246,9 @@ class AddShop : AppCompatActivity() {
         bookTitle.text.toString(),
         shop_order.toInt(),
         "",
-        coverImage,
+        coverImage!!.data,
         null,
-        "",
+        "${startTimeOrder.text}TO${endTimeOrder.text}",
         location.text.toString(),
         delivery_charge.text.toString().toInt(),
         da_charge.text.toString().toInt(),
@@ -280,9 +299,9 @@ class AddShop : AppCompatActivity() {
           bookTitle.text.toString(),
           shop_order.toInt(),
           "",
-          coverImage,
-          it,
-          "",
+          coverImage!!.data,
+          it!!.data,
+          "${startTimeOrder.text}TO${endTimeOrder.text}",
           location.text.toString(),
           delivery_charge.text.toString().toInt(),
           da_charge.text.toString().toInt(),

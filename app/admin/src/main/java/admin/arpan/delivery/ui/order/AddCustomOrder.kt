@@ -624,7 +624,7 @@ class AddCustomOrder : Fragment(), ShopProductAddOrderInterface,
           if (it == null) {
             requireContext().showToast("Failed to upload image", FancyToast.ERROR)
           } else {
-            cartProductEntity2.custom_order_image = it
+            cartProductEntity2.custom_order_image = it.data!!
             cartProductEntity.add(cartProductEntity2)
             orderItemMain.products = cartProductEntity
             placeOrderFinalUpload(viewMain, orderItemMain)

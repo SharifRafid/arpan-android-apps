@@ -67,7 +67,7 @@ class AuthViewModel @Inject constructor(
     emit(refreshResponse)
   }
 
-  fun switchActivity(loginResponse: LoginResponse, activity: Class<Any?>) {
+  fun switchActivity(loginResponse: LoginResponse, activity: Class<Any?>) : Boolean {
     if (loginResponse.error != true) {
       if (loginResponse.user!!.roles.contains("da")) {
         val intent = Intent(
@@ -77,17 +77,20 @@ class AuthViewModel @Inject constructor(
         authRepository.saveLoginResponse(loginResponse)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         application.applicationContext.startActivity(intent)
+        return true
       } else {
         application.applicationContext.showToast(
           "You're number is not registered as a delivery agent.",
           FancyToast.ERROR
         )
+        return false
       }
     } else {
       application.applicationContext.showToast(
         loginResponse.message!!,
         FancyToast.ERROR
       )
+      return false
     }
   }
 

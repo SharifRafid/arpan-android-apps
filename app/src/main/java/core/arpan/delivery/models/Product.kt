@@ -15,5 +15,6 @@ data class Product(
     var order: Int? = null,
     var price: Int? = null,
     var shop: String? = null,
-    var shortDescription: String? = null
+    var shortDescription: String? = null,
+    var activeHours: String? = null
 )

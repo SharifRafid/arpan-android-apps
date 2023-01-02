@@ -98,7 +98,8 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
   private fun fetchOrderData(view: View) {
     progressDialog.show()
     LiveDataUtil.observeOnce(daViewModel.getOrderById(orderId)) {
-      progressDialog.dismiss()
+      Log.d("Order Data", it.toString());
+      progressDialog.hide()
       if (it.error == true) {
         view.orderHistoryProgressBarContainer.visibility = View.GONE
         view.noDataFoundLinearLayoutContainer.visibility = View.VISIBLE
@@ -447,16 +448,16 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
     view.orderStatusTopButton.text = orderItemMain.orderStatus
     view.cancelOrderButton.visibility = View.GONE
     when (orderItemMain.orderStatus) {
-      "PENDING" -> {
+      "PLACED" -> {
         val setpview5 = view.findViewById<View>(R.id.step_view_order_progress) as HorizontalStepView
         val stepsBeanList: MutableList<StepBean> = ArrayList()
-        val stepBean4 = StepBean("     PENDING     ", 1)
+        val stepBean4 = StepBean("     PLACED     ", 1)
         val stepBean0 = StepBean("     VERIFIED     ", -1)
         val stepBean1 = StepBean("     PROCESSING     ", -1)
         val stepBean2 = StepBean("     PICKED UP     ", -1)
         val stepBean3 = StepBean("     COMPLETED     ", -1)
         if (orderItemMain.orderPlacingTimeStamp != 0L) {
-          stepBean4.name = "PENDING\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
+          stepBean4.name = "PLACED\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
         }
         stepsBeanList.add(stepBean4)
         stepsBeanList.add(stepBean0)
@@ -469,7 +470,7 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
       "VERIFIED" -> {
         val setpview5 = view.findViewById<View>(R.id.step_view_order_progress) as HorizontalStepView
         val stepsBeanList: MutableList<StepBean> = ArrayList()
-        val stepBean4 = StepBean("     PENDING     ", 1)
+        val stepBean4 = StepBean("     PLACED     ", 1)
         val stepBean0 = StepBean("     VERIFIED     ", 1)
         val stepBean1 = StepBean("     PROCESSING     ", -1)
         val stepBean2 = StepBean("     PICKED UP     ", -1)
@@ -478,7 +479,7 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
           stepBean0.name = "VERIFIED\n(${getDate(orderItemMain.verifiedTimeStampMillis, "hh:mm")})"
         }
         if (orderItemMain.orderPlacingTimeStamp != 0L) {
-          stepBean4.name = "PENDING\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
+          stepBean4.name = "PLACED\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
         }
         stepsBeanList.add(stepBean4)
         stepsBeanList.add(stepBean0)
@@ -505,7 +506,7 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
       "PROCESSING" -> {
         val setpview5 = view.findViewById<View>(R.id.step_view_order_progress) as HorizontalStepView
         val stepsBeanList: MutableList<StepBean> = ArrayList()
-        val stepBean4 = StepBean("     PENDING     ", 1)
+        val stepBean4 = StepBean("     PLACED     ", 1)
         val stepBean0 = StepBean("     VERIFIED     ", 1)
         val stepBean1 = StepBean("     PROCESSING     ", 1)
         val stepBean2 = StepBean("     PICKED UP     ", -1)
@@ -518,7 +519,7 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
           stepBean0.name = "VERIFIED\n(${getDate(orderItemMain.verifiedTimeStampMillis, "hh:mm")})"
         }
         if (orderItemMain.orderPlacingTimeStamp != 0L) {
-          stepBean4.name = "PENDING\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
+          stepBean4.name = "PLACED\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
         }
         stepsBeanList.add(stepBean4)
         stepsBeanList.add(stepBean0)
@@ -542,7 +543,7 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
         view.step_view_order_progress.visibility = View.VISIBLE
         val setpview5 = view.findViewById<View>(R.id.step_view_order_progress) as HorizontalStepView
         val stepsBeanList: MutableList<StepBean> = ArrayList()
-        val stepBean4 = StepBean("     PENDING     ", 1)
+        val stepBean4 = StepBean("     PLACED     ", 1)
         val stepBean0 = StepBean("     VERIFIED     ", 1)
         val stepBean1 = StepBean("     PROCESSING     ", 1)
         val stepBean2 = StepBean("     PICKED UP     ", 1)
@@ -555,7 +556,7 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
           stepBean0.name = "VERIFIED\n(${getDate(orderItemMain.verifiedTimeStampMillis, "hh:mm")})"
         }
         if (orderItemMain.orderPlacingTimeStamp != 0L) {
-          stepBean4.name = "PENDING\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
+          stepBean4.name = "PLACED\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
         }
         if (orderItemMain.pickedUpTimeStampMillis != 0L) {
           stepBean2.name = "PICKED UP\n(${getDate(orderItemMain.pickedUpTimeStampMillis, "hh:mm")})"
@@ -602,7 +603,7 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
         val setpview5 =
           view.findViewById<View>(R.id.step_view_order_progress) as HorizontalStepView
         val stepsBeanList: MutableList<StepBean> = ArrayList()
-        val stepBean4 = StepBean("     PENDING     ", 1)
+        val stepBean4 = StepBean("     PLACED     ", 1)
         val stepBean0 = StepBean("     VERIFIED     ", 1)
         val stepBean1 = StepBean("     PROCESSING     ", 1)
         val stepBean2 = StepBean("     PICKED UP     ", 1)
@@ -616,7 +617,7 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
             "VERIFIED\n(${getDate(orderItemMain.verifiedTimeStampMillis, "hh:mm")})"
         }
         if (orderItemMain.orderPlacingTimeStamp != 0L) {
-          stepBean4.name = "PENDING\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
+          stepBean4.name = "PLACED\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
         }
         if (orderItemMain.pickedUpTimeStampMillis != 0L) {
           stepBean2.name =
@@ -650,19 +651,18 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
 
   private fun requestPaymentFromCustomer(view: View, orderItemMain: OrderItemMain) {
     val dialog2 = contextMain.createProgressDialog()
-    val view = LayoutInflater.from(contextMain)
-      .inflate(R.layout.dialog_alert_layout_main, null)
+    val dialogView = layoutInflater.inflate(R.layout.dialog_alert_layout_main, null)
     val dialog = AlertDialog.Builder(contextMain)
-      .setView(view).create()
+      .setView(dialogView).create()
     dialog.setCancelable(false)
-    view.btnNoDialogAlertMain.text = "No"
-    view.btnYesDialogAlertMain.text = "Yes"
-    view.titleTextView.text = "Did you deliver the order?"
-    view.messageTextView.text = "Are you sure to ask the customer for payment ?"
-    view.btnNoDialogAlertMain.setOnClickListener {
+    dialogView.btnNoDialogAlertMain.text = "No"
+    dialogView.btnYesDialogAlertMain.text = "Yes"
+    dialogView.titleTextView.text = "Did you deliver the order?"
+    dialogView.messageTextView.text = "Are you sure to ask the customer for payment ?"
+    dialogView.btnNoDialogAlertMain.setOnClickListener {
       dialog.dismiss()
     }
-    view.btnYesDialogAlertMain.setOnClickListener {
+    dialogView.btnYesDialogAlertMain.setOnClickListener {
       dialog.dismiss()
       dialog2.show()
       LiveDataUtil.observeOnce(daViewModel.requestPayment(orderId, true)) {
@@ -826,19 +826,19 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
   private fun acceptOrderItem(view: View, orderItemMain: OrderItemMain) {
     // ACCEPT ORDER FOR DA - TOTALLY A SEPARATE OPERATION
     val dialog2 = contextMain.createProgressDialog()
-    val view = LayoutInflater.from(contextMain)
+    val dialogView = LayoutInflater.from(contextMain)
       .inflate(R.layout.dialog_alert_layout_main, null)
     val dialog = AlertDialog.Builder(contextMain)
-      .setView(view).create()
+      .setView(dialogView).create()
     dialog.setCancelable(false)
-    view.btnNoDialogAlertMain.text = "No"
-    view.btnYesDialogAlertMain.text = "Yes"
-    view.titleTextView.text = "Do you want to accept the order?"
-    view.messageTextView.text = "You're about to accept this order , are you sure ?"
-    view.btnNoDialogAlertMain.setOnClickListener {
+    dialogView.btnNoDialogAlertMain.text = "No"
+    dialogView.btnYesDialogAlertMain.text = "Yes"
+    dialogView.titleTextView.text = "Do you want to accept the order?"
+    dialogView.messageTextView.text = "You're about to accept this order , are you sure ?"
+    dialogView.btnNoDialogAlertMain.setOnClickListener {
       dialog.dismiss()
     }
-    view.btnYesDialogAlertMain.setOnClickListener {
+    dialogView.btnYesDialogAlertMain.setOnClickListener {
       dialog2.show()
       LiveDataUtil.observeOnce(
         daViewModel.acceptOrder(

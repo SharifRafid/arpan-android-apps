@@ -49,6 +49,15 @@ class ProductRepository
     }
   }
 
+  suspend fun getProductsByShop(shop_key: String): GetAllProductsResponse {
+    val accessToken = getAccessToken()
+    return if (accessToken == null) {
+      GetAllProductsResponse(true, "Not logged in")
+    } else {
+      retrofitBuilder.apiService.getProductsByShop("Bearer $accessToken", shop_key, 100, 1)
+    }
+  }
+
 
   suspend fun updateProduct(id: String, item: HashMap<String, Any>): Product {
     val accessToken = getAccessToken()

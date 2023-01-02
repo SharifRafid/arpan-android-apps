@@ -15,6 +15,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -112,14 +113,15 @@ class AddOffers : AppCompatActivity() {
       requestFile
     )
     LiveDataUtil.observeOnce(uploadViewModel.uploadItem(body, "banners")) { image ->
-      if (!image.isNullOrEmpty()) {
+      Log.e("ImageResponse",image.toString())
+      if (image!=null) {
         val hashMap = Banner()
         hashMap.order = 1
-        hashMap.icon = image
+        hashMap.icon = image.data
         LiveDataUtil.observeOnce(bannerViewModel.createItem(hashMap)) {
           dialog.dismiss()
           if (it.id != null) {
-            arrayList.add(image)
+            arrayList.add(image.data!!)
             keyList.add(it.id!!)
             offerItemRecyclerAdapter.notifyItemInserted(arrayList.size - 1)
             Toast.makeText(

@@ -123,7 +123,7 @@ fun orderNumberToString(num : String) :String {
     for(char in num) {
         newString += numStrConvConst[char.toString().toInt()];
     }
-    return newString
+    return num
 }
 
 fun generateSignatureOTP() : String{

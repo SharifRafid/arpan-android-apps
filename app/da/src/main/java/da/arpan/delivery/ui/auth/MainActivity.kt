@@ -214,7 +214,15 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     progressDialog.dismiss()
                 }
-                viewModel.switchActivity(it, HomeActivity::class.java as Class<Any?>)
+                val b = viewModel.switchActivity(it, HomeActivity::class.java as Class<Any?>)
+                if(!b){
+                    sendCodeLinear.visibility = View.VISIBLE
+                    enterCodeLinear.visibility = View.GONE
+                    progressSendOtpFinal.visibility = View.GONE
+                    buttonSendOtpFinal.visibility = View.VISIBLE
+                    otpDidntReciveText.visibility = View.VISIBLE
+                    buttonResendOtpFinal.visibility = View.GONE
+                }
             }
         }
     }

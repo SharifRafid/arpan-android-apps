@@ -147,14 +147,14 @@ class UpdateDaFragment : Fragment() {
             requestFile
           )
           LiveDataUtil.observeOnce(uploadViewModel.uploadItem(body, "users")) { image ->
-            if (!image.isNullOrEmpty()) {
+            if (image!=null) {
               val daAgent = HashMap<String, Any>()
               daAgent["name"] = userName
               daAgent["phone"] = mobile
               daAgent["bkash"] = bkashNumber
               daAgent["daUID"] = daIDString
               daAgent["bloodGroup"] = bloodGroup
-              daAgent["image"] = image
+              daAgent["image"] = image.data!!
               daAgent["daCategory"] =
                 if (view.radioGroup1.checkedRadioButtonId == R.id.regularRadio) {
                   Constants.DA_REG

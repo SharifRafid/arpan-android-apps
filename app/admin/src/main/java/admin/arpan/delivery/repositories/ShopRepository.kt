@@ -31,12 +31,21 @@ class ShopRepository
     }
   }
 
-  suspend fun updateShop(id: String, shop: HashMap<String, Any>): Shop {
+  suspend fun updateShopItem(id: String, shop: HashMap<String, Any>): Shop {
     val accessToken = getAccessToken()
     return if (accessToken == null) {
       Shop()
     } else {
       retrofitBuilder.apiService.updateShop("Bearer $accessToken", id, shop)
+    }
+  }
+
+  suspend fun updateShopOrder(shop: HashMap<String, Any>): GetAllShopsResponse {
+    val accessToken = getAccessToken()
+    return if (accessToken == null) {
+      GetAllShopsResponse(true, "Not logged in", ArrayList(), null, null, null, null)
+    } else {
+      retrofitBuilder.apiService.updateShopOrder("Bearer $accessToken", shop)
     }
   }
 

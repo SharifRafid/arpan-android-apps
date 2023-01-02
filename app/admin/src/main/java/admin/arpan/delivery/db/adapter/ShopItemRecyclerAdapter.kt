@@ -38,10 +38,10 @@ import com.google.firebase.dynamiclinks.ShortDynamicLink
 
 
 class ShopItemRecyclerAdapter(
-    private val context: Context,
-    private val shopItems: ArrayList<Shop>,
-    private val dataLocation: String,
-    private val shopRecyclerAdapterInterface: ShopRecyclerAdapterInterface
+  private val context: Context,
+  private val shopItems: ArrayList<Shop>,
+  private val dataLocation: String,
+  private val shopRecyclerAdapterInterface: ShopRecyclerAdapterInterface
 ) : RecyclerView.Adapter<ShopItemRecyclerAdapter.RecyclerViewHolder>() {
 
   class RecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -51,6 +51,8 @@ class ShopItemRecyclerAdapter(
     val cardView = itemView.mainCardView as CardView
     val editButton = itemView.editButton as ImageButton
     val shareButton = itemView.shareButton as ImageButton
+    val upButton = itemView.moveUpButton as ImageButton
+    val downButton = itemView.moveDownButton as ImageButton
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewHolder {
@@ -69,6 +71,7 @@ class ShopItemRecyclerAdapter(
 
   override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
     holder.textView.text = shopItems[position].name
+
     holder.switchShopStatus.isChecked = shopItems[position].open!!
 
     holder.switchShopStatus.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -158,6 +161,14 @@ class ShopItemRecyclerAdapter(
         }
       }
     }
+
+    holder.upButton.setOnClickListener {
+      shopRecyclerAdapterInterface.moveShopUp(position, shopItems[position])
+    }
+
+    holder.downButton.setOnClickListener {
+      shopRecyclerAdapterInterface.moveShopDown(position, shopItems[position])
+    }
   }
 
   override fun getItemId(position: Int): Long {
@@ -171,13 +182,17 @@ class ShopItemRecyclerAdapter(
 
 interface ShopRecyclerAdapterInterface {
   fun onSwitchShopStatusCheckedChanged(
-      position: Int,
-      shop: Shop,
-      buttonView: View,
-      isChecked: Boolean
+    position: Int,
+    shop: Shop,
+    buttonView: View,
+    isChecked: Boolean
   )
 
   fun deleteShop(position: Int, shop: Shop)
 
   fun createShareLink(position: Int, id: String, link: String, shareButton: View)
+
+  fun moveShopUp(position: Int, shop: Shop)
+
+  fun moveShopDown(position: Int, shop: Shop)
 }

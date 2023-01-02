@@ -21,7 +21,7 @@
             android:layout_margin="8dp"
             android:checked="true"
             android:background="@drawable/radio_selector"
-            android:text="PENDING"
+            android:text="PLACED"
             android:textColor="@color/white"
             android:button="@android:color/transparent" />
         <com.google.android.material.radiobutton.MaterialRadioButton

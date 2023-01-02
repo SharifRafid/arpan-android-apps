@@ -39,6 +39,18 @@ class ProductViewModel @Inject constructor(
       emit(getAllProductsResponse)
     }
 
+  fun getProductsByShop(shop_key: String) =
+    liveData(Dispatchers.IO) {
+      var getAllProductsResponse: GetAllProductsResponse
+      try {
+        getAllProductsResponse = productRepository.getProductsByShop(shop_key)
+      } catch (e: Exception) {
+        getAllProductsResponse = GetAllProductsResponse(true, e.message.toString())
+        e.printStackTrace()
+      }
+      emit(getAllProductsResponse)
+    }
+
   fun updateProductItem(id: String, item: HashMap<String, Any>) = liveData(Dispatchers.IO) {
     var productResponse: Product
     try {

@@ -157,7 +157,7 @@ class AddProductFragmennt : DialogFragment() {
         progress_circular.visibility = View.GONE
       } else {
         val hashMap = Product()
-        hashMap.icon = it
+        hashMap.icon = it.data!!
         hashMap.price = price.text.toString().toInt()
         hashMap.name = productTitle.text.toString()
         hashMap.shop = shop_key

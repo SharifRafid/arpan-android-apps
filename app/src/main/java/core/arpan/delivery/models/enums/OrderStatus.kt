@@ -1,7 +1,7 @@
 package core.arpan.delivery.models.enums
 
 enum class OrderStatus {
-  PENDING,
+  PLACED,
   VERIFIED,
   PROCESSING,
   PICKED_UP,

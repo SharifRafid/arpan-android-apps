@@ -53,7 +53,7 @@ class OrderOldSubItemRecyclerAdapter(
     holder.timeTextView.text = getDate(productItems[position].orderPlacingTimeStamp, "hh:mm a")
     holder.statusTextView.text = productItems[position].orderStatus
     when (productItems[position].orderStatus) {
-      "PENDING" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#262626"))
+      "PLACED" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#262626"))
       "VERIFIED" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#FA831B"))
       "PROCESSING" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#ED9D34"))
       "PICKED UP" -> holder.statusTextView.setBackgroundColor(Color.parseColor("#ED9D34"))

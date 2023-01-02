@@ -43,9 +43,20 @@ class ShopViewModel @Inject constructor(
   fun updateShopItem(id: String, shop: HashMap<String, Any>) = liveData(Dispatchers.IO) {
     var shopResponse: Shop
     try {
-      shopResponse = shopRepository.updateShop(id, shop)
+      shopResponse = shopRepository.updateShopItem(id, shop)
     } catch (e: Exception) {
       shopResponse = Shop()
+      e.printStackTrace()
+    }
+    emit(shopResponse)
+  }
+
+  fun updateShopsOrder(shop: HashMap<String, Any>) = liveData(Dispatchers.IO) {
+    var shopResponse: GetAllShopsResponse
+    try {
+      shopResponse = shopRepository.updateShopOrder(shop)
+    } catch (e: Exception) {
+      shopResponse = GetAllShopsResponse(true, e.message.toString(), ArrayList(), null, null, null, null)
       e.printStackTrace()
     }
     emit(shopResponse)

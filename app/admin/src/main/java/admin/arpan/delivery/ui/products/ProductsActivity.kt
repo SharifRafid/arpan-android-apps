@@ -1,6 +1,7 @@
 package admin.arpan.delivery.ui.products
 
 import admin.arpan.delivery.R
+import admin.arpan.delivery.db.adapter.ProdCatEditItemRecyclerAdapter
 import admin.arpan.delivery.db.adapter.ProductItemRecyclerAdapter
 import admin.arpan.delivery.db.adapter.ProductRecyclerAdapterInterface
 import core.arpan.delivery.models.Category
@@ -97,6 +98,7 @@ class ProductsActivity : AppCompatActivity(), ProductRecyclerAdapterInterface {
         namesList.clear()
         keysList.clear()
         categoryItemsArray.clear()
+        categoryItemsArray.add(Category("ALL", "ALL", "ALL", 0, "product"))
         categoryItemsArray.addAll(it)
         Collections.sort(categoryItemsArray, kotlin.Comparator { o1, o2 ->
           (o1.order!!).compareTo(o2.order!!)
@@ -116,6 +118,9 @@ class ProductsActivity : AppCompatActivity(), ProductRecyclerAdapterInterface {
           loadProductsFromCategory()
         }
         mainRecyclerView.setOnItemLongClickListener { parent, view, position, id ->
+          if (position == 0) {
+            return@setOnItemLongClickListener true
+          }
           val dialogAskingEditOrDelete = AlertDialog.Builder(this)
           dialogAskingEditOrDelete.setPositiveButton(
             "EDIT"
@@ -249,24 +254,52 @@ class ProductsActivity : AppCompatActivity(), ProductRecyclerAdapterInterface {
 
   private fun loadProductsFromCategory() {
     progressDialog.show()
-    LiveDataUtil.observeOnce(productViewModel.getProductsByCategoryId(shop_category_tag_name, shop_key)) {
-      progressDialog.dismiss()
-      if (it.error == true) {
-        showToast("Error : ${it.message}", FancyToast.ERROR)
-      } else {
-        productsMainArrayList.clear()
-        productsMainArrayList.addAll(it.results!!)
-        productsItemAdapterMain =
-          ProductItemRecyclerAdapter(
+    if (shop_category_tag_name == "ALL") {
+      LiveDataUtil.observeOnce(productViewModel.getProductsByShop(shop_key)) {
+        progressDialog.dismiss()
+        if (it.error == true) {
+          showToast("Error : ${it.message}", FancyToast.ERROR)
+        } else {
+          productsMainArrayList.clear()
+          productsMainArrayList.addAll(it.results!!)
+          productsRecyclerView.adapter = ProdCatEditItemRecyclerAdapter(
             this@ProductsActivity,
-            this@ProductsActivity,
-            productsMainArrayList, shop.name!!, shop_category_key, shop_key,
-            this
+            productsMainArrayList,
+            shop_key,
+            namesList,
+            keysList,
+            productViewModel
           )
-        productsRecyclerView.adapter = productsItemAdapterMain
-        val linearLayoutManager = LinearLayoutManager(this@ProductsActivity)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        productsRecyclerView.layoutManager = linearLayoutManager
+          val linearLayoutManager = LinearLayoutManager(this@ProductsActivity)
+          linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+          productsRecyclerView.layoutManager = linearLayoutManager
+        }
+      }
+    } else {
+      LiveDataUtil.observeOnce(
+        productViewModel.getProductsByCategoryId(
+          shop_category_tag_name,
+          shop_key
+        )
+      ) {
+        progressDialog.dismiss()
+        if (it.error == true) {
+          showToast("Error : ${it.message}", FancyToast.ERROR)
+        } else {
+          productsMainArrayList.clear()
+          productsMainArrayList.addAll(it.results!!)
+          productsItemAdapterMain =
+            ProductItemRecyclerAdapter(
+              this@ProductsActivity,
+              this@ProductsActivity,
+              productsMainArrayList, shop.name!!, shop_category_key, shop_key,
+              this
+            )
+          productsRecyclerView.adapter = productsItemAdapterMain
+          val linearLayoutManager = LinearLayoutManager(this@ProductsActivity)
+          linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+          productsRecyclerView.layoutManager = linearLayoutManager
+        }
       }
     }
 

@@ -24,19 +24,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.github.dhaval2404.colorpicker.MaterialColorPickerDialog
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.shashank.sony.fancytoastlib.FancyToast
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import core.arpan.delivery.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_update_shop.*
-import kotlinx.android.synthetic.main.activity_update_shop.bookTitle
-import kotlinx.android.synthetic.main.activity_update_shop.categoriesSpinner
-import kotlinx.android.synthetic.main.activity_update_shop.clientShopSwitchMaterial
-import kotlinx.android.synthetic.main.activity_update_shop.da_charge
-import kotlinx.android.synthetic.main.activity_update_shop.delivery_charge
-import kotlinx.android.synthetic.main.activity_update_shop.imagePick
-import kotlinx.android.synthetic.main.activity_update_shop.imagePickCover
-import kotlinx.android.synthetic.main.activity_update_shop.location
-import kotlinx.android.synthetic.main.activity_update_shop.titleTextView
-import kotlinx.android.synthetic.main.activity_update_shop.upload
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -86,6 +77,11 @@ class UpdateShop : AppCompatActivity() {
     delivery_charge.setText(shopItem.deliveryCharge.toString())
     location.setText(shopItem.location)
     shopOrderEdittext.setText(shopItem.order.toString())
+
+    if(!shopItem.activeHours.isNullOrEmpty()){
+      startTimeOrder.setText(shopItem.activeHours!!.split("TO")[0])
+      endTimeOrder.setText(shopItem.activeHours!!.split("TO")[1])
+    }
 
     if (!shopItem.notices.isEmpty()) {
       addShopNoteTextView.text = shopItem.notices[0].title
@@ -210,6 +206,25 @@ class UpdateShop : AppCompatActivity() {
   }
 
   private fun initOnClicks() {
+
+    startTimeOrder.setOnClickListener {
+      var timePicker = TimePickerDialog.newInstance(
+        { view, hourOfDay, minute, second ->
+          startTimeOrder.setText("$hourOfDay:$minute")
+        }, false
+      )
+      timePicker.show(supportFragmentManager, "Start_Time")
+    }
+
+    endTimeOrder.setOnClickListener {
+      var timePicker = TimePickerDialog.newInstance(
+        { view, hourOfDay, minute, second ->
+          endTimeOrder.setText("$hourOfDay:$minute")
+        }, false
+      )
+      timePicker.show(supportFragmentManager, "End_Time")
+    }
+
     imagePick.setOnClickListener {
       imageNo = 0
       ImagePicker.with(this)
@@ -273,6 +288,7 @@ class UpdateShop : AppCompatActivity() {
       map["icon"] = it!!
       map["order"] = shopOrderEdittext.text.toString()
       map["location"] = location.text.toString()
+      map["activeHours"] = "${startTimeOrder.text}TO${endTimeOrder.text}"
       map["name"] = bookTitle.text.toString()
       if (addShopNoteTextView.text.isEmpty() || addShopNoteTextView.text == "Add Shop Top Note") {
         map["notices"] = ArrayList<Notice>()
@@ -305,6 +321,7 @@ class UpdateShop : AppCompatActivity() {
     map["deliveryCharge"] = delivery_charge.text.toString()
     map["order"] = shopOrderEdittext.text.toString()
     map["location"] = location.text.toString()
+    map["activeHours"] = "${startTimeOrder.text}TO${endTimeOrder.text}"
     map["name"] = bookTitle.text.toString()
     if (addShopNoteTextView.text.isEmpty() || addShopNoteTextView.text == "Add Shop Top Note") {
       map["notices"] = ArrayList<Notice>()
@@ -349,6 +366,7 @@ class UpdateShop : AppCompatActivity() {
       map["coverPhoto"] = coverPhoto!!
       map["order"] = shopOrderEdittext.text.toString()
       map["location"] = location.text.toString()
+      map["activeHours"] = "${startTimeOrder.text}TO${endTimeOrder.text}"
       map["name"] = bookTitle.text.toString()
       if (addShopNoteTextView.text.isEmpty() || addShopNoteTextView.text == "Add Shop Top Note") {
         map["notices"] = ArrayList<Notice>()
@@ -376,7 +394,6 @@ class UpdateShop : AppCompatActivity() {
 
   private fun uploadFile() {
     val coverStringName = "cover${System.currentTimeMillis()}"
-
     val iconStringName = "icon${System.currentTimeMillis()}"
     // Pass it like this
     var file = imagePath.toFile()
@@ -404,6 +421,7 @@ class UpdateShop : AppCompatActivity() {
         map["deliveryCharge"] = delivery_charge.text.toString()
         map["coverPhoto"] = coverPhoto!!
         map["icon"] = it!!
+        map["activeHours"] = "${startTimeOrder.text}TO${endTimeOrder.text}"
         map["order"] = shopOrderEdittext.text.toString()
         map["location"] = location.text.toString()
         map["name"] = bookTitle.text.toString()

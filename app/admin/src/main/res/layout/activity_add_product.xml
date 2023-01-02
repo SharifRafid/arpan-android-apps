@@ -55,6 +55,57 @@
                 android:textSize="14sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal"
+          android:padding="10dp">
+            <com.google.android.material.textfield.TextInputLayout
+              style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+              android:layout_width="0dp"
+              android:layout_weight="1"
+              android:layout_height="wrap_content"
+              android:layout_margin="2dp"
+              android:hint="অর্ডার স্টার্ট টাইম">
+
+                <EditText
+                  android:id="@+id/startTimeOrder"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:backgroundTint="#fff"
+                  android:ems="10"
+                  android:focusableInTouchMode="false"
+                  android:focusable="false"
+                  android:fontFamily="@font/hind_siliguri_font"
+                  android:inputType="textPersonName"
+                  android:padding="5dp"
+                  android:textColor="#000"
+                  android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+              style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+              android:layout_width="0dp"
+              android:layout_weight="1"
+              android:layout_height="wrap_content"
+              android:layout_margin="2dp"
+              android:hint="অর্ডার এন্ড টাইম">
+
+                <EditText
+                  android:id="@+id/endTimeOrder"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:backgroundTint="#fff"
+                  android:ems="10"
+                  android:focusableInTouchMode="false"
+                  android:focusable="false"
+                  android:fontFamily="@font/hind_siliguri_font"
+                  android:inputType="textPersonName"
+                  android:padding="5dp"
+                  android:textColor="#000"
+                  android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/titleTextView"

@@ -2,6 +2,7 @@ package admin.arpan.delivery.viewModels
 
 import android.app.Application
 import androidx.lifecycle.*
+import core.arpan.delivery.models.CommonResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import okhttp3.MultipartBody
@@ -15,7 +16,7 @@ class UploadViewModel @Inject constructor(
 
   fun uploadItem(body: MultipartBody.Part, path: String) =
     liveData(Dispatchers.IO) {
-      var uploadResponse: String?
+      var uploadResponse: CommonResponse<String>?
       try {
         uploadResponse = uploadRepository.uploadFile(body, path)
       } catch (e: Exception) {

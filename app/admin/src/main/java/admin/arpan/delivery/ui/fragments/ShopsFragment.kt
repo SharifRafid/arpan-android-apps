@@ -170,4 +170,60 @@ class ShopsFragment : Fragment(), ShopRecyclerAdapterInterface {
       }
     }
   }
+
+  override fun moveShopUp(position: Int, shop: Shop) {
+    val hashMap = HashMap<String, Any>()
+    val intIndexArray = ArrayList<Int>()
+    var index = 0
+    while(index < arrayList.size){
+      intIndexArray.add(index)
+      index++
+    }
+    if(position-1 > 0){
+      intIndexArray[position] = position-1
+      intIndexArray[position-1] = position
+      hashMap["data"] = intIndexArray
+      progressDialog.show()
+      LiveDataUtil.observeOnce(viewModel.updateShopsOrder(hashMap)) {
+        progressDialog.dismiss()
+        if (it.error != true) {
+          arrayList.clear()
+          arrayList.addAll(it.results.sortedWith(compareBy { shopItem -> shopItem.order }))
+          adapterShops.notifyDataSetChanged()
+        } else {
+          contextMain.showToast("Failed to update", FancyToast.ERROR)
+        }
+      }
+    }else{
+      contextMain.showToast("Cannot move up", FancyToast.ERROR)
+    }
+  }
+
+  override fun moveShopDown(position: Int, shop: Shop) {
+    val hashMap = HashMap<String, Any>()
+    val intIndexArray = ArrayList<Int>()
+    var index = 0
+    while(index < arrayList.size){
+      intIndexArray.add(index)
+      index++
+    }
+    if(position+1 < arrayList.size){
+      intIndexArray[position] = position+1
+      intIndexArray[position+1] = position
+      hashMap["data"] = intIndexArray
+      progressDialog.show()
+      LiveDataUtil.observeOnce(viewModel.updateShopsOrder(hashMap)) {
+        progressDialog.dismiss()
+        if (it.error != true) {
+          arrayList.clear()
+          arrayList.addAll(it.results.sortedWith(compareBy { shopItem -> shopItem.order }))
+          adapterShops.notifyDataSetChanged()
+        } else {
+          contextMain.showToast("Failed to update", FancyToast.ERROR)
+        }
+      }
+    }else{
+      contextMain.showToast("Cannot move down", FancyToast.ERROR)
+    }
+  }
 }

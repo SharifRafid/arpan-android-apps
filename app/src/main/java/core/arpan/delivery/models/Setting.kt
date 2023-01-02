@@ -6,6 +6,8 @@ data class Setting(
 
   var id: String? = null,
 
+  var appOn: Boolean? = null,
+  var outdoorDeliveryOn: Boolean? = null,
   var orderStartTime: String? = null,
   var orderEndTime: String? = null,
   var orderOverTimeAllowed: Boolean? = null,

@@ -91,10 +91,21 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <CheckBox
-                    android:id="@+id/allowOverTimeCheckBox"
+                    android:id="@+id/outdoorOnOfSwitch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ওভারটাইম"
+                    android:text="Outdoor"
+                    android:gravity="center"
+                    android:button="@null"
+                    android:padding="5dp"
+                    android:drawableTop="?android:attr/listChoiceIndicatorMultiple"
+                    android:textSize="10sp"/>
+
+                <CheckBox
+                    android:id="@+id/appStatusCheckbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="App On"
                     android:gravity="center"
                     android:button="@null"
                     android:padding="5dp"

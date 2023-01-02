@@ -82,6 +82,7 @@ class ShopProductCategoryFragment(private val dialogFragmentInterface: DialogFra
       val pCIDs = ArrayList<String>()
       oldCategories.map { cItem -> pCIDs.add(cItem.id!!) }
       pCIDs.add(allCategories[i].id!!)
+      pCIDs.remove("ALL")
       map["productCategories"] = pCIDs
       LiveDataUtil.observeOnce(
         shopViewModel.updateShopItem(

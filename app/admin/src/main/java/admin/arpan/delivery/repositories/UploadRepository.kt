@@ -1,5 +1,6 @@
 package admin.arpan.delivery.repositories
 
+import core.arpan.delivery.models.CommonResponse
 import core.arpan.delivery.utils.Preference
 import core.arpan.delivery.utils.networking.responses.DefaultResponse
 import okhttp3.MultipartBody
@@ -20,7 +21,7 @@ class UploadRepository
     }
   }
 
-  suspend fun uploadFile(file: MultipartBody.Part, path: String): String? {
+  suspend fun uploadFile(file: MultipartBody.Part, path: String): CommonResponse<String>? {
     val accessToken = getAccessToken()
     return if (accessToken == null) {
       null

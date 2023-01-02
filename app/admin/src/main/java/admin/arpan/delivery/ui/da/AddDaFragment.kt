@@ -121,7 +121,7 @@ class AddDaFragment : Fragment() {
             requestFile
           )
           LiveDataUtil.observeOnce(uploadViewModel.uploadItem(body, "users")) { image ->
-            if (!image.isNullOrEmpty()) {
+            if (image!=null) {
               val hashMap = User()
               hashMap.name = userName
               hashMap.daUID = daIDString
@@ -134,7 +134,7 @@ class AddDaFragment : Fragment() {
               } else {
                 Constants.DA_PERM
               }
-              hashMap.image = image
+              hashMap.image = image.data!!
               hashMap.daStatus = false
               LiveDataUtil.observeOnce(daViewModel.createItem(hashMap)) {
                 progress.dismiss()

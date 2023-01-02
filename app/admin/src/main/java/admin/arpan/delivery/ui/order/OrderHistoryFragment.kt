@@ -496,16 +496,16 @@ class OrderHistoryFragment : Fragment() {
     view.orderStatusTopButton.text = orderItemMain.orderStatus
     view.cancelOrderButton.visibility = View.GONE
     when (orderItemMain.orderStatus) {
-      "PENDING" -> {
+      "PLACED" -> {
         val setpview5 = view.findViewById<View>(R.id.step_view_order_progress) as HorizontalStepView
         val stepsBeanList: MutableList<StepBean> = ArrayList()
-        val stepBean4 = StepBean("     PENDING     ", 1)
+        val stepBean4 = StepBean("     PLACED     ", 1)
         val stepBean0 = StepBean("     VERIFIED     ", -1)
         val stepBean1 = StepBean("     PROCESSING     ", -1)
         val stepBean2 = StepBean("     PICKED UP     ", -1)
         val stepBean3 = StepBean("     COMPLETED     ", -1)
         if (orderItemMain.orderPlacingTimeStamp != 0L) {
-          stepBean4.name = "PENDING\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
+          stepBean4.name = "PLACED\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
         }
         stepsBeanList.add(stepBean4)
         stepsBeanList.add(stepBean0)
@@ -532,7 +532,7 @@ class OrderHistoryFragment : Fragment() {
       "VERIFIED" -> {
         val setpview5 = view.findViewById<View>(R.id.step_view_order_progress) as HorizontalStepView
         val stepsBeanList: MutableList<StepBean> = ArrayList()
-        val stepBean4 = StepBean("     PENDING     ", 1)
+        val stepBean4 = StepBean("     PLACED     ", 1)
         val stepBean0 = StepBean("     VERIFIED     ", 1)
         val stepBean1 = StepBean("     PROCESSING     ", -1)
         val stepBean2 = StepBean("     PICKED UP     ", -1)
@@ -541,7 +541,7 @@ class OrderHistoryFragment : Fragment() {
           stepBean0.name = "VERIFIED\n(${getDate(orderItemMain.verifiedTimeStampMillis, "hh:mm")})"
         }
         if (orderItemMain.orderPlacingTimeStamp != 0L) {
-          stepBean4.name = "PENDING\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
+          stepBean4.name = "PLACED\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
         }
         stepsBeanList.add(stepBean4)
         stepsBeanList.add(stepBean0)
@@ -589,7 +589,7 @@ class OrderHistoryFragment : Fragment() {
       "PROCESSING" -> {
         val setpview5 = view.findViewById<View>(R.id.step_view_order_progress) as HorizontalStepView
         val stepsBeanList: MutableList<StepBean> = ArrayList()
-        val stepBean4 = StepBean("     PENDING     ", 1)
+        val stepBean4 = StepBean("     PLACED     ", 1)
         val stepBean0 = StepBean("     VERIFIED     ", 1)
         val stepBean1 = StepBean("     PROCESSING     ", 1)
         val stepBean2 = StepBean("     PICKED UP     ", -1)
@@ -602,7 +602,7 @@ class OrderHistoryFragment : Fragment() {
           stepBean0.name = "VERIFIED\n(${getDate(orderItemMain.verifiedTimeStampMillis, "hh:mm")})"
         }
         if (orderItemMain.orderPlacingTimeStamp != 0L) {
-          stepBean4.name = "PENDING\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
+          stepBean4.name = "PLACED\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
         }
         stepsBeanList.add(stepBean4)
         stepsBeanList.add(stepBean0)
@@ -622,7 +622,7 @@ class OrderHistoryFragment : Fragment() {
           cancelOrderItem(view, orderItemMain)
         }
 
-        if (orderItemMain.daID!!.isNotEmpty()) {
+        if (!orderItemMain.daID.isNullOrEmpty()) {
           view.linearAssignedDA.visibility = View.VISIBLE
           view.assignedToDaTextView.text = "Assigned to " + orderItemMain.daDetails!!.name!!
           view.callDaNowImageView.setOnClickListener {
@@ -643,7 +643,7 @@ class OrderHistoryFragment : Fragment() {
         view.step_view_order_progress.visibility = View.VISIBLE
         val setpview5 = view.findViewById<View>(R.id.step_view_order_progress) as HorizontalStepView
         val stepsBeanList: MutableList<StepBean> = ArrayList()
-        val stepBean4 = StepBean("     PENDING     ", 1)
+        val stepBean4 = StepBean("     PLACED     ", 1)
         val stepBean0 = StepBean("     VERIFIED     ", 1)
         val stepBean1 = StepBean("     PROCESSING     ", 1)
         val stepBean2 = StepBean("     PICKED UP     ", 1)
@@ -656,7 +656,7 @@ class OrderHistoryFragment : Fragment() {
           stepBean0.name = "VERIFIED\n(${getDate(orderItemMain.verifiedTimeStampMillis, "hh:mm")})"
         }
         if (orderItemMain.orderPlacingTimeStamp != 0L) {
-          stepBean4.name = "PENDING\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
+          stepBean4.name = "PLACED\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
         }
         if (orderItemMain.pickedUpTimeStampMillis != 0L) {
           stepBean2.name = "PICKED UP\n(${getDate(orderItemMain.pickedUpTimeStampMillis, "hh:mm")})"
@@ -727,7 +727,7 @@ class OrderHistoryFragment : Fragment() {
           val setpview5 =
             view.findViewById<View>(R.id.step_view_order_progress) as HorizontalStepView
           val stepsBeanList: MutableList<StepBean> = ArrayList()
-          val stepBean4 = StepBean("     PENDING     ", 1)
+          val stepBean4 = StepBean("     PLACED     ", 1)
           val stepBean0 = StepBean("     VERIFIED     ", 1)
           val stepBean1 = StepBean("     PROCESSING     ", 1)
           val stepBean2 = StepBean("     PICKED UP     ", 1)
@@ -741,7 +741,7 @@ class OrderHistoryFragment : Fragment() {
               "VERIFIED\n(${getDate(orderItemMain.verifiedTimeStampMillis, "hh:mm")})"
           }
           if (orderItemMain.orderPlacingTimeStamp != 0L) {
-            stepBean4.name = "PENDING\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
+            stepBean4.name = "PLACED\n(${getDate(orderItemMain.orderPlacingTimeStamp, "hh:mm")})"
           }
           if (orderItemMain.pickedUpTimeStampMillis != 0L) {
             stepBean2.name =
@@ -905,8 +905,8 @@ class OrderHistoryFragment : Fragment() {
             workWithTheDocumentData(view, itOrder)
             sendNotification(
               orderItemMain.userId!!,
-              "আপনার অর্ডার ${orderNumberToString(orderItemMain.orderId.toString())} টি কনফার্ম করা হয়েছে ।",
-              "আপনার অর্ডারটি কনফার্ম করা হয়েছে, দ্রুতই অর্ডারটি আপনার কাছে পৌছে যাবে ।",
+              "Order# ${orderNumberToString(orderItemMain.orderId.toString())} is verified.",
+              "Your order has been verified. We will start the processing soon.",
               orderId
             )
           } else {
@@ -1221,7 +1221,7 @@ class OrderHistoryFragment : Fragment() {
     val dialogToForceChangeOrderStatusView =
       LayoutInflater.from(requireContext()).inflate(R.layout.dialog_force_change_order_status, null)
     when (orderItemMain.orderStatus) {
-      "PENDING" -> {
+      "PLACED" -> {
         dialogToForceChangeOrderStatusView.statusRadioButtonGroup.check(R.id.pendingRadioButton)
         dialogToForceChangeOrderStatusView.processingRadioButton.visibility = View.GONE
         dialogToForceChangeOrderStatusView.pickedRadioButton.visibility = View.GONE
@@ -1258,7 +1258,7 @@ class OrderHistoryFragment : Fragment() {
       val hashMap = HashMap<String, Any>()
       when (dialogToForceChangeOrderStatusView.statusRadioButtonGroup.checkedRadioButtonId) {
         R.id.pendingRadioButton -> {
-          hashMap["orderStatus"] = "PENDING"
+          hashMap["orderStatus"] = "PLACED"
           hashMap["daID"] = ""
         }
         R.id.cancelledRadio -> {

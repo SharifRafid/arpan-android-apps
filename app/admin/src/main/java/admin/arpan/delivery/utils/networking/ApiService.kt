@@ -81,7 +81,7 @@ interface ApiService {
     @Header("Authorization") accessToken: String,
     @Part fileName: MultipartBody.Part,
     @Header("path") path: String,
-  ): String
+  ): CommonResponse<String>?
 
   @POST("orders")
   suspend fun createNewOrder(
@@ -133,6 +133,12 @@ interface ApiService {
     @Path("id") id: String,
     @Body shop: HashMap<String, Any>
   ): Shop
+
+  @PUT("shops")
+  suspend fun updateShopOrder(
+    @Header("Authorization") accessToken: String,
+    @Body shop: HashMap<String, Any>
+  ): GetAllShopsResponse
 
   @DELETE("shops/{id}")
   suspend fun deleteShop(
@@ -197,6 +203,14 @@ interface ApiService {
   suspend fun getProductsByCategoryId(
     @Header("Authorization") accessToken: String,
     @Query("categoryId") id: String,
+    @Query("shopId") shopId: String,
+    @Query("limit") limit: Int,
+    @Query("page") page: Int
+  ): GetAllProductsResponse
+
+  @GET("products")
+  suspend fun getProductsByShop(
+    @Header("Authorization") accessToken: String,
     @Query("shopId") shopId: String,
     @Query("limit") limit: Int,
     @Query("page") page: Int
