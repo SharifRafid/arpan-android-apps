@@ -74,6 +74,7 @@ class OrderOldMainItemRecyclerAdapter(
                 holder.productsTextView.text = productItems[position].date
             }
         }
+
         holder.productsRecyclerView.layoutManager = LinearLayoutManager(context)
         holder.productsRecyclerView.adapter = cartItemRecyclerAdapter
 
