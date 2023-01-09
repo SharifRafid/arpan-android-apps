@@ -334,10 +334,11 @@ class EditOrderFragment(val orderItemMain: OrderItemMain) : DialogFragment(),
               val filteredArray =
                 mainShopItemHashMap.filter { it -> it.shop_doc_id == cartItemEntity.product_item_shop_key }
               if (filteredArray.isEmpty()) {
-                val shopItem = MainShopCartItem()
-                shopItem.shop_doc_id = cartItemEntity.product_item_shop_key
-                shopItem.cart_products.add(cartItemEntity)
-                mainShopItemHashMap.add(shopItem)
+                val shopCartItem = MainShopCartItem()
+                shopCartItem.shop_details = shopResults.results[shopsArrayListKeys.indexOf(cartItemEntity.product_item_shop_key)]
+                shopCartItem.shop_doc_id = cartItemEntity.product_item_shop_key
+                shopCartItem.cart_products.add(cartItemEntity)
+                mainShopItemHashMap.add(shopCartItem)
               } else {
                 mainShopItemHashMap[mainShopItemHashMap.indexOf(filteredArray[0])]
                   .cart_products.add(cartItemEntity)

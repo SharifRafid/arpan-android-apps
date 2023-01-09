@@ -166,5 +166,6 @@
   <string name="please_complete_profile">Please complete profile your profile to order faster...</string>
   <string name="location_permission">লোকেশন পারমিশন</string>
   <string name="do_you_want_to_track_location">ডেলিভারি দ্রুততর করার জন্য আপনি কি লোকেশন পারমিশন দিতে চান?</string>
+  <string name="type_delete_to_confirm">Type DELETE to confirm</string>
 
 </resources>

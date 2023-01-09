@@ -16,7 +16,7 @@ data class CartProductEntity (
     var product_item_price : Int = 0,
     var product_item_offer_price : Int = 0,
     var product_arpan_profit : Int = 0,
-    var product_item_image : String = "",
+    var product_item_image : String? = "",
     var product_item_desc : String = "",
     var product_item_amount : Int = 1,
 

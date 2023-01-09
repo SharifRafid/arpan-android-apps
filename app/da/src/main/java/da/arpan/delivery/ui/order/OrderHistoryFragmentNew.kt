@@ -35,6 +35,9 @@ import kotlinx.android.synthetic.main.dialog_alert_layout_main.view.*
 import kotlinx.android.synthetic.main.dialog_restaurant_pay_pick_up.view.*
 import kotlinx.android.synthetic.main.fragment_order_history_new.view.*
 import kotlinx.android.synthetic.main.product_image_big_view.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -49,6 +52,8 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
   private var orderItemMain: OrderItemMain? = null
   lateinit var contextMain: Context
   private val daViewModel: DAViewModel by viewModels()
+  var timer = Timer()
+  private var viewMain : View? = null
 
   override fun onAttach(activity: Activity) {
     // TODO Auto-generated method stub
@@ -76,6 +81,30 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
     initVars(view)
   }
 
+  override fun onStop() {
+    super.onStop()
+    timer.cancel()
+  }
+
+  override fun onPause() {
+    super.onPause()
+    timer.cancel()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if(viewMain != null){
+      timer = Timer()
+      timer.schedule(object : TimerTask() {
+        override fun run() {
+          GlobalScope.launch(Dispatchers.Main) {
+            fetchOrderData(viewMain!!, true)
+          }
+        }
+      }, 5000,5000)
+    }
+  }
+
   private fun initVars(view: View) {
     progressDialog = contextMain.createProgressDialog()
     productRecyclerViewAdapter = OrderProductItemRecyclerAdapter(
@@ -88,15 +117,27 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
     }
     orderId = arguments?.getString("orderID").toString()
     customerId = arguments?.getString("customerId").toString()
-    fetchOrderData(view)
+    fetchOrderData(view, true)
     view.swipeRefreshMain.setOnRefreshListener {
       view.swipeRefreshMain.isRefreshing = false
-      fetchOrderData(view)
+      fetchOrderData(view, true)
     }
+    timer.schedule(object : TimerTask() {
+      override fun run() {
+        GlobalScope.launch(Dispatchers.Main) {
+          fetchOrderData(view, true)
+        }
+      }
+    }, 5000, 5000)
+
+    viewMain = view
   }
 
-  private fun fetchOrderData(view: View) {
-    progressDialog.show()
+  private fun fetchOrderData(view: View, silently:Boolean) {
+    if(!silently){
+      progressDialog.show()
+    }
+    Log.e("OrderHistoryFragment", "Fetching order data")
     LiveDataUtil.observeOnce(daViewModel.getOrderById(orderId)) {
       Log.d("Order Data", it.toString());
       progressDialog.hide()
@@ -670,7 +711,7 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
           contextMain.showToast(it.message.toString(), FancyToast.ERROR)
         } else {
           contextMain.showToast("Success", FancyToast.SUCCESS)
-          fetchOrderData(view)
+          fetchOrderData(viewMain!!, true)
         }
         dialog2.dismiss()
       }
@@ -774,7 +815,7 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
             contextMain.showToast(it.message.toString(), FancyToast.ERROR)
           } else {
             contextMain.showToast("Order Picked", FancyToast.SUCCESS)
-            fetchOrderData(view)
+            fetchOrderData(view, true)
           }
         }
       }
@@ -809,7 +850,7 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
             contextMain.showToast(it.message.toString(), FancyToast.ERROR)
           } else {
             contextMain.showToast("Order Picked", FancyToast.SUCCESS)
-            fetchOrderData(view)
+            fetchOrderData(view, true)
           }
         }
       }
@@ -847,7 +888,7 @@ class OrderHistoryFragmentNew(private val orderHistoryPage: OrderHistoryPage) : 
         )
       ) {
         if (it.error != true) {
-          fetchOrderData(view)
+          fetchOrderData(view,true)
           contextMain.showToast("Sucess", FancyToast.SUCCESS)
         } else {
           contextMain.showToast(it.message.toString(), FancyToast.ERROR)

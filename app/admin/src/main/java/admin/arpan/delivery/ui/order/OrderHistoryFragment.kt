@@ -1,21 +1,18 @@
 package admin.arpan.delivery.ui.order
 
-import core.arpan.delivery.utils.CalculationLogics
 import admin.arpan.delivery.R
 import admin.arpan.delivery.db.adapter.OrderProductItemRecyclerAdapter
-import core.arpan.delivery.models.Shop
-import core.arpan.delivery.models.User
-import core.arpan.delivery.models.enums.OrderStatus
 import admin.arpan.delivery.ui.home.HomeViewModelMainData
 import admin.arpan.delivery.ui.interfaces.HomeMainNewInterface
-import core.arpan.delivery.utils.networking.requests.SendNotificationRequest
 import admin.arpan.delivery.viewModels.DAViewModel
 import admin.arpan.delivery.viewModels.NotificationViewModel
 import admin.arpan.delivery.viewModels.OrderViewModel
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.*
+import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -36,11 +33,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.radiobutton.MaterialRadioButton
 import com.google.firebase.database.FirebaseDatabase
 import com.shashank.sony.fancytoastlib.FancyToast
-import core.arpan.delivery.models.CartProductEntity
-import core.arpan.delivery.models.MainShopCartItem
-import core.arpan.delivery.models.OrderItemMain
-import core.arpan.delivery.models.SavedPrefClientTf
+import core.arpan.delivery.models.*
+import core.arpan.delivery.models.enums.OrderStatus
 import core.arpan.delivery.utils.*
+import core.arpan.delivery.utils.networking.requests.SendNotificationRequest
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.assign_da_list_view.view.*
 import kotlinx.android.synthetic.main.dialog_ask_cancellation_reason.view.*
@@ -49,23 +45,11 @@ import kotlinx.android.synthetic.main.dialog_ask_password.view.edt_enter_passwor
 import kotlinx.android.synthetic.main.dialog_ask_password.view.edt_enter_password_field_container
 import kotlinx.android.synthetic.main.dialog_force_change_order_status.view.*
 import kotlinx.android.synthetic.main.fragment_order_history_new.view.*
-import kotlinx.android.synthetic.main.fragment_order_history_new.view.mainOrderDetailsDataContainerLinearLayout
-import kotlinx.android.synthetic.main.fragment_order_history_new.view.noDataFoundLinearLayoutContainer
-import kotlinx.android.synthetic.main.fragment_order_history_new.view.orderArpanChargePrice
-import kotlinx.android.synthetic.main.fragment_order_history_new.view.orderDaPrice
-import kotlinx.android.synthetic.main.fragment_order_history_new.view.orderDeliveryPrice
-import kotlinx.android.synthetic.main.fragment_order_history_new.view.orderHistoryProgressBarContainer
-import kotlinx.android.synthetic.main.fragment_order_history_new.view.orderIdTextView
-import kotlinx.android.synthetic.main.fragment_order_history_new.view.orderImagePicture
-import kotlinx.android.synthetic.main.fragment_order_history_new.view.orderTotalPrice
-import kotlinx.android.synthetic.main.fragment_order_history_new.view.title_text_view
+import kotlinx.android.synthetic.main.old_orders_list_view.*
 import kotlinx.android.synthetic.main.product_image_big_view.view.*
-import kotlinx.android.synthetic.main.product_image_big_view.view.imageView
-import java.lang.ClassCastException
+import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 import kotlin.math.roundToInt
 
 @AndroidEntryPoint
@@ -84,6 +68,8 @@ class OrderHistoryFragment : Fragment() {
   private val orderViewModel: OrderViewModel by viewModels()
   private val daViewModel: DAViewModel by viewModels()
   private val notificationViewModel: NotificationViewModel by viewModels()
+  var timer = Timer()
+  private var viewMain : View? = null
 
   override fun onAttach(context: Context) {
     super.onAttach(context)
@@ -117,11 +103,49 @@ class OrderHistoryFragment : Fragment() {
     view.title_text_view.setOnClickListener {
       homeMainNewInterface.callOnBackPressed()
     }
-    fetchOrderData(orderId, view)
+    fetchOrderData(orderId, view, false)
+
+    timer.schedule(object : TimerTask() {
+      override fun run() {
+        GlobalScope.launch(Dispatchers.Main) {
+          fetchOrderData(orderId, view, true)
+        }
+      }
+    }, 5000, 5000)
+
+    viewMain = view
+
   }
 
-  private fun fetchOrderData(orderID: String, view: View) {
-    progressDialog.show()
+  override fun onStop() {
+    super.onStop()
+    timer.cancel()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if(viewMain != null){
+      timer = Timer()
+      timer.schedule(object : TimerTask() {
+        override fun run() {
+          GlobalScope.launch(Dispatchers.Main) {
+            fetchOrderData(orderId, viewMain!!, true)
+          }
+        }
+      }, 5000,5000)
+    }
+  }
+
+  override fun onPause() {
+    super.onPause()
+    timer.cancel()
+  }
+
+  private fun fetchOrderData(orderID: String, view: View, silently:Boolean) {
+    if(!silently){
+      progressDialog.show()
+    }
+    Log.e("OrderHistoryFragment", "Fetching order data")
     LiveDataUtil.observeOnce(orderViewModel.getItemById(orderID)) {
       progressDialog.dismiss()
       if (it.error == true) {
@@ -927,12 +951,12 @@ class OrderHistoryFragment : Fragment() {
     alertDialogToDeleteUserDataView.deleteOrderItemMainDialogButton.setOnClickListener {
       alertDialogToDeleteUserDataView.deleteOrderItemMainDialogButton.isEnabled = false
       if (alertDialogToDeleteUserDataView.edt_enter_password_field.text.toString()
-          .trim() == "TESTPASS"
+          .trim() == "DELETE"
       ) {
         alertDialogToDeleteUserData.dismiss()
         startDeletingProcess(view, orderItemMain)
       } else {
-        contextMain.showToast("Cannot be empty", FancyToast.ERROR)
+        contextMain.showToast("Write DELETE in the box", FancyToast.ERROR)
         alertDialogToDeleteUserDataView.deleteOrderItemMainDialogButton.isEnabled = true
       }
     }
