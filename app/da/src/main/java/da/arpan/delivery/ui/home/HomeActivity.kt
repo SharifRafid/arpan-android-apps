@@ -1,6 +1,7 @@
 package da.arpan.delivery.ui.home
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -66,6 +67,7 @@ class HomeActivity : AppCompatActivity(), OrderHistoryPage {
   var daAgent = User()
   private val daViewModel: DAViewModel by viewModels()
   private val authViewModel: AuthViewModel by viewModels()
+  private lateinit var progressDialog : Dialog
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -92,6 +94,7 @@ class HomeActivity : AppCompatActivity(), OrderHistoryPage {
   }
 
   private fun initLogics() {
+    progressDialog = createProgressDialog()
     title_text_view.setOnClickListener {
       WalletDialogFragment().show(supportFragmentManager, "")
     }
@@ -193,7 +196,6 @@ class HomeActivity : AppCompatActivity(), OrderHistoryPage {
       swipeRefresh.isRefreshing = false
       loadSecondData()
     }
-    val progressDialog = createProgressDialog()
     noProductsText.visibility = View.GONE
     progressBar.visibility = View.VISIBLE
     ordersRecyclerView.visibility = View.GONE
@@ -233,50 +235,32 @@ class HomeActivity : AppCompatActivity(), OrderHistoryPage {
               changeStatusCard.isEnabled = false
               val hashMap = HashMap<String, Any>()
               if (radioGroup.checkedRadioButtonId == R.id.activeRadio) {
-                radioGroup.check(R.id.inactiveRadio)
-                hashMap["activeNow"] = false
+                if (daAgent.daStatusTitle.isNullOrEmpty()) {
+                  showToast(
+                    "Please add your status before making yourself inactive",
+                    FancyToast.ERROR
+                  )
+                  showStatusChangeDialog()
+                  changeStatusCard.isEnabled = true
+                } else {
+                  radioGroup.check(R.id.inactiveRadio)
+                  hashMap["activeNow"] = false
+                  LiveDataUtil.observeOnce(daViewModel.updateSelfProfile(hashMap)) {
+                    changeStatusCard.isEnabled = true
+                  }
+                }
               } else {
                 radioGroup.check(R.id.activeRadio)
                 hashMap["activeNow"] = true
-              }
-              LiveDataUtil.observeOnce(daViewModel.updateSelfProfile(hashMap)) {
-                changeStatusCard.isEnabled = true
+                LiveDataUtil.observeOnce(daViewModel.updateSelfProfile(hashMap)) {
+                  changeStatusCard.isEnabled = true
+                }
               }
             }
             dialog.show()
           }
           changeStatusCard.setOnLongClickListener {
-            val dialogForStatusTextChange = AlertDialog.Builder(this).create()
-            val dialogForStatusTextChangeView =
-              LayoutInflater.from(this).inflate(R.layout.dialog_text_input_da_status, null)
-            if (selfProfile.daStatusTitle.isNullOrEmpty()) {
-              dialogForStatusTextChangeView.textDialogTextInputDaStatusFieldEdittext.setText(
-                selfProfile.daStatusTitle.toString()
-              )
-            }
-            dialogForStatusTextChangeView.textDialogTextInputDaStatusButton.setOnClickListener {
-              progressDialog.show()
-              val hashMap = HashMap<String, Any>()
-              hashMap["daStatusTitle"] =
-                dialogForStatusTextChangeView.textDialogTextInputDaStatusFieldEdittext.text.toString()
-              LiveDataUtil.observeOnce(daViewModel.updateSelfProfile(hashMap)) {
-                progressDialog.dismiss()
-                showToast("Successfully Set Status", FancyToast.SUCCESS)
-              }
-              dialogForStatusTextChange.dismiss()
-            }
-            dialogForStatusTextChangeView.textDialogTextInputDaStatusButtonRemove.setOnClickListener {
-              progressDialog.show()
-              val hashMap = HashMap<String, Any>()
-              hashMap["daStatusTitle"] = ""
-              LiveDataUtil.observeOnce(daViewModel.updateSelfProfile(hashMap)) {
-                progressDialog.dismiss()
-                showToast("Successfully Removed Status", FancyToast.SUCCESS)
-              }
-              dialogForStatusTextChange.dismiss()
-            }
-            dialogForStatusTextChange.setView(dialogForStatusTextChangeView)
-            dialogForStatusTextChange.show()
+            showStatusChangeDialog()
             true
           }
           val getOrdersRequest = GetOrdersRequest()
@@ -337,6 +321,55 @@ class HomeActivity : AppCompatActivity(), OrderHistoryPage {
     }
   }
 
+  private fun showStatusChangeDialog(){
+    val dialogForStatusTextChange = AlertDialog.Builder(this).create()
+    val dialogForStatusTextChangeView =
+      LayoutInflater.from(this).inflate(R.layout.dialog_text_input_da_status, null)
+    if (!daAgent.daStatusTitle.isNullOrEmpty()) {
+      dialogForStatusTextChangeView.textDialogTextInputDaStatusFieldEdittext.setText(
+        daAgent.daStatusTitle.toString()
+      )
+    }
+    dialogForStatusTextChangeView.textDialogTextInputDaStatusButton.setOnClickListener {
+      progressDialog.show()
+      val hashMap = HashMap<String, Any>()
+      val daStatusTitleText =
+        dialogForStatusTextChangeView.textDialogTextInputDaStatusFieldEdittext.text.toString()
+      hashMap["daStatusTitle"] = daStatusTitleText
+      LiveDataUtil.observeOnce(daViewModel.updateSelfProfile(hashMap)) {
+        progressDialog.dismiss()
+        if (it.error != true) {
+          currentStatusTextView.visibility = View.VISIBLE
+          currentStatusTextView.text = daStatusTitleText
+          daAgent.daStatusTitle = daStatusTitleText
+          daAgent.daStatusTitle = daStatusTitleText
+          showToast("Successfully set status", FancyToast.SUCCESS)
+        } else {
+          showToast("Failed To Set Status", FancyToast.ERROR)
+        }
+      }
+      dialogForStatusTextChange.dismiss()
+    }
+    dialogForStatusTextChangeView.textDialogTextInputDaStatusButtonRemove.setOnClickListener {
+      progressDialog.show()
+      val hashMap = HashMap<String, Any>()
+      hashMap["daStatusTitle"] = ""
+      LiveDataUtil.observeOnce(daViewModel.updateSelfProfile(hashMap)) {
+        progressDialog.dismiss()
+        if (it.error != true) {
+          currentStatusTextView.visibility = View.GONE
+          daAgent.daStatusTitle = ""
+          showToast("Successfully Removed Status", FancyToast.SUCCESS)
+        } else {
+          showToast("Failed To Remove Status", FancyToast.ERROR)
+        }
+      }
+      dialogForStatusTextChange.dismiss()
+    }
+    dialogForStatusTextChange.setView(dialogForStatusTextChangeView)
+    dialogForStatusTextChange.show()
+  }
+
   private fun placeOrderMainDataCompletedOrders() {
     ordersMainHashMapCompletedOrders.clear()
     ordersMainOldItemsArrayListCompleted.clear()
@@ -363,10 +396,10 @@ class HomeActivity : AppCompatActivity(), OrderHistoryPage {
     var yourIncome = 0
     var arpansDue = 0
     var todaysOrders = 0
-    Log.e("TEsT",calculationToday.agentsIncome.toString())
-    Log.e("TEsT",calculationToday.agentsDueToArpan.toString())
-    Log.e("TEsT",calculationToday.agentsDueToArpanPermanent.toString())
-    Log.e("TEsT",calculationToday.agentsIncomePermanent.toString())
+    Log.e("TEsT", calculationToday.agentsIncome.toString())
+    Log.e("TEsT", calculationToday.agentsDueToArpan.toString())
+    Log.e("TEsT", calculationToday.agentsDueToArpanPermanent.toString())
+    Log.e("TEsT", calculationToday.agentsIncomePermanent.toString())
     if (daAgent.daCategory == Constants.DA_PERM) {
       yourIncome = calculationToday.agentsIncomePermanent
       arpansDue = calculationToday.agentsDueToArpanPermanent
